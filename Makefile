@@ -15,4 +15,7 @@ catalog:
 dry-run:
 	./craft orchestrate examples/plan.json --dry-run
 
-test: doctor validate catalog dry-run
+plan:
+	python3 scripts/validate-plan.py examples/plan.json
+
+test: doctor validate catalog plan dry-run

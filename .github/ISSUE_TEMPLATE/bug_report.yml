@@ -1,0 +1,36 @@
+name: Bug report
+description: Report a reproducible Craft Harness problem.
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What broke?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: Include exact commands and output.
+      value: |
+        ```bash
+        craft doctor
+        craft validate
+        ```
+    validations:
+      required: true
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime target
+      placeholder: Claude, Codex, Gemini, OpenCode, OpenHands, or other
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, git version, and relevant runtime versions.
+    validations:
+      required: true

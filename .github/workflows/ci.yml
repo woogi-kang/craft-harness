@@ -25,5 +25,7 @@ jobs:
         run: craft catalog --format md --output docs/skill-catalog.md
       - name: Orchestrator dry run
         run: craft orchestrate examples/plan.json --dry-run
+      - name: Plan schema validation
+        run: python scripts/validate-plan.py examples/plan.json
       - name: Markdown links
         run: python scripts/check-markdown-links.py .

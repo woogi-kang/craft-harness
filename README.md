@@ -35,7 +35,7 @@ included in this initial public scope.
 ## Quick Start
 
 ```bash
-git clone https://github.com/YOUR_ORG/craft-harness.git
+git clone https://github.com/woogi-kang/craft-harness.git
 cd craft-harness
 python3 -m pip install -e .
 craft doctor

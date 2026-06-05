@@ -1,0 +1,34 @@
+name: Feature request
+description: Suggest an improvement or new pack.
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What workflow should Craft Harness improve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should change?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Core CLI
+        - Orchestration
+        - Skill registry
+        - Runtime adapter
+        - Dev pack
+        - Design QA
+        - Optional pack
+        - Documentation
+    validations:
+      required: true

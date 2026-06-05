@@ -33,3 +33,13 @@ Commands, QA flow, screenshots, API checks, or review criteria.
 
 The orchestrator writes each worker's criteria into `task.md`. QA workers use
 those criteria as the completion contract.
+
+## Schema
+
+The draft public schema lives at `schemas/plan-v2.schema.json`.
+
+Validate a plan with:
+
+```bash
+python3 scripts/validate-plan.py examples/plan.json
+```
