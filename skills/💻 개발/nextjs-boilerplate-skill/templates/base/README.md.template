@@ -1,0 +1,72 @@
+# {{PROJECT_NAME}}
+
+Next.js 15 프로젝트
+
+## Tech Stack
+
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/)
+- **Linting**: ESLint + Prettier
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18.17+
+- npm or pnpm
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server (Turbopack) |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run format` | Format with Prettier |
+| `npm run typecheck` | TypeScript type check |
+
+## Project Structure
+
+```
+src/
+├── app/                 # Next.js App Router
+│   ├── layout.tsx       # Root layout
+│   ├── page.tsx         # Home page
+│   └── globals.css      # Global styles
+├── components/
+│   └── ui/              # shadcn/ui components
+└── lib/
+    └── utils.ts         # Utility functions
+```
+
+## Adding shadcn/ui Components
+
+```bash
+npx shadcn@latest add button
+npx shadcn@latest add card
+npx shadcn@latest add input
+```
+
+## Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [shadcn/ui Documentation](https://ui.shadcn.com/)
+
+## License
+
+MIT

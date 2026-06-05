@@ -1,0 +1,482 @@
+// Widget Template for Figma → Flutter Conversion
+// Usage: Replace placeholders with actual values
+
+// =============================================================================
+// STATELESS WIDGET TEMPLATE
+// =============================================================================
+
+/**
+ * StatelessWidget Template
+ *
+ * Placeholders:
+ * - {{WidgetName}}: PascalCase widget name (e.g., HeroSection)
+ * - {{widget_name}}: snake_case file name (e.g., hero_section)
+ * - {{description}}: Widget description
+ * - {{props}}: Props declarations
+ * - {{propsConstructor}}: Constructor parameters
+ * - {{content}}: Widget build content
+ */
+
+// lib/features/{{feature}}/presentation/widgets/{{widget_name}}.dart
+
+import 'package:flutter/material.dart';
+import 'package:my_app/core/theme/theme.dart';
+
+/// {{description}}
+class {{WidgetName}} extends StatelessWidget {
+  {{props}}
+
+  const {{WidgetName}}({
+    super.key,
+    {{propsConstructor}}
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return {{content}};
+  }
+}
+
+
+// =============================================================================
+// STATEFUL WIDGET TEMPLATE
+// =============================================================================
+
+// lib/features/{{feature}}/presentation/widgets/{{widget_name}}.dart
+
+import 'package:flutter/material.dart';
+import 'package:my_app/core/theme/theme.dart';
+
+/// {{description}}
+class {{WidgetName}} extends StatefulWidget {
+  {{props}}
+
+  const {{WidgetName}}({
+    super.key,
+    {{propsConstructor}}
+  });
+
+  @override
+  State<{{WidgetName}}> createState() => _{{WidgetName}}State();
+}
+
+class _{{WidgetName}}State extends State<{{WidgetName}}> {
+  {{stateVariables}}
+
+  @override
+  void initState() {
+    super.initState();
+    {{initLogic}}
+  }
+
+  @override
+  void dispose() {
+    {{disposeLogic}}
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return {{content}};
+  }
+}
+
+
+// =============================================================================
+// FEATURE CARD TEMPLATE
+// =============================================================================
+
+// lib/shared/widgets/cards/feature_card.dart
+
+import 'package:flutter/material.dart';
+import 'package:my_app/core/theme/theme.dart';
+
+/// Feature card widget displaying an icon, title, and description
+class FeatureCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String description;
+  final VoidCallback? onTap;
+
+  const FeatureCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.description,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(AppSpacing.lg),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: AppRadius.mdAll,
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: AppRadius.smAll,
+              ),
+              child: Icon(
+                icon,
+                color: AppColors.primary,
+                size: 24,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Text(
+              title,
+              style: AppTypography.titleLarge,
+            ),
+            SizedBox(height: AppSpacing.sm),
+            Text(
+              description,
+              style: AppTypography.bodyMedium.copyWith(
+                color: AppColors.mutedForeground,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+// =============================================================================
+// SECTION TEMPLATE
+// =============================================================================
+
+// lib/features/{{feature}}/presentation/widgets/{{section_name}}_section.dart
+
+import 'package:flutter/material.dart';
+import 'package:my_app/core/theme/theme.dart';
+
+/// {{description}}
+class {{SectionName}}Section extends StatelessWidget {
+  {{props}}
+
+  const {{SectionName}}Section({
+    super.key,
+    {{propsConstructor}}
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.screenPadding,
+        vertical: AppSpacing.sectionGap,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          {{content}}
+        ],
+      ),
+    );
+  }
+}
+
+
+// =============================================================================
+// PAGE TEMPLATE
+// =============================================================================
+
+// lib/features/{{feature}}/presentation/pages/{{page_name}}_page.dart
+
+import 'package:flutter/material.dart';
+import 'package:my_app/core/theme/theme.dart';
+
+/// {{description}}
+class {{PageName}}Page extends StatelessWidget {
+  const {{PageName}}Page({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('{{PageTitle}}'),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              {{sections}}
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+// =============================================================================
+// RESPONSIVE SECTION TEMPLATE
+// =============================================================================
+
+// lib/features/{{feature}}/presentation/widgets/{{section_name}}_section.dart
+
+import 'package:flutter/material.dart';
+import 'package:my_app/core/theme/theme.dart';
+import 'package:my_app/shared/widgets/responsive_builder.dart';
+
+/// {{description}} with responsive layout
+class {{SectionName}}Section extends StatelessWidget {
+  {{props}}
+
+  const {{SectionName}}Section({
+    super.key,
+    {{propsConstructor}}
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(
+      mobile: _buildMobile(context),
+      tablet: _buildTablet(context),
+      desktop: _buildDesktop(context),
+    );
+  }
+
+  Widget _buildMobile(BuildContext context) {
+    return Padding(
+      padding: AppPadding.section,
+      child: Column(
+        children: [
+          {{mobileContent}}
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTablet(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.xl,
+        vertical: AppSpacing.sectionGap,
+      ),
+      child: {{tabletContent}},
+    );
+  }
+
+  Widget _buildDesktop(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(maxWidth: 1200),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.xxxl,
+        vertical: AppSpacing.xxxl,
+      ),
+      child: {{desktopContent}},
+    );
+  }
+}
+
+
+// =============================================================================
+// BUTTON WIDGET TEMPLATE
+// =============================================================================
+
+// lib/shared/widgets/buttons/app_button.dart
+
+import 'package:flutter/material.dart';
+import 'package:my_app/core/theme/theme.dart';
+
+enum AppButtonVariant { primary, secondary, outline, ghost }
+enum AppButtonSize { sm, md, lg }
+
+/// Customizable button widget with variants and sizes
+class AppButton extends StatelessWidget {
+  final String label;
+  final VoidCallback? onPressed;
+  final AppButtonVariant variant;
+  final AppButtonSize size;
+  final IconData? leadingIcon;
+  final IconData? trailingIcon;
+  final bool isLoading;
+  final bool isExpanded;
+
+  const AppButton({
+    super.key,
+    required this.label,
+    this.onPressed,
+    this.variant = AppButtonVariant.primary,
+    this.size = AppButtonSize.md,
+    this.leadingIcon,
+    this.trailingIcon,
+    this.isLoading = false,
+    this.isExpanded = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final height = switch (size) {
+      AppButtonSize.sm => 36.0,
+      AppButtonSize.md => 44.0,
+      AppButtonSize.lg => 52.0,
+    };
+
+    final horizontalPadding = switch (size) {
+      AppButtonSize.sm => 12.0,
+      AppButtonSize.md => 16.0,
+      AppButtonSize.lg => 24.0,
+    };
+
+    final textStyle = switch (size) {
+      AppButtonSize.sm => AppTypography.labelSmall,
+      AppButtonSize.md => AppTypography.labelMedium,
+      AppButtonSize.lg => AppTypography.labelLarge,
+    };
+
+    final iconSize = switch (size) {
+      AppButtonSize.sm => 16.0,
+      AppButtonSize.md => 18.0,
+      AppButtonSize.lg => 20.0,
+    };
+
+    Widget child = Row(
+      mainAxisSize: isExpanded ? MainAxisSize.max : MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (isLoading) ...[
+          SizedBox(
+            width: iconSize,
+            height: iconSize,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+          SizedBox(width: 8),
+        ] else if (leadingIcon != null) ...[
+          Icon(leadingIcon, size: iconSize),
+          SizedBox(width: 8),
+        ],
+        Text(label, style: textStyle),
+        if (trailingIcon != null && !isLoading) ...[
+          SizedBox(width: 8),
+          Icon(trailingIcon, size: iconSize),
+        ],
+      ],
+    );
+
+    final style = ButtonStyle(
+      minimumSize: WidgetStatePropertyAll(
+        Size(isExpanded ? double.infinity : 0, height),
+      ),
+      padding: WidgetStatePropertyAll(
+        EdgeInsets.symmetric(horizontal: horizontalPadding),
+      ),
+      shape: WidgetStatePropertyAll(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+
+    return switch (variant) {
+      AppButtonVariant.primary => ElevatedButton(
+          onPressed: isLoading ? null : onPressed,
+          style: style,
+          child: child,
+        ),
+      AppButtonVariant.secondary => ElevatedButton(
+          onPressed: isLoading ? null : onPressed,
+          style: style.copyWith(
+            backgroundColor: WidgetStatePropertyAll(AppColors.secondary),
+            foregroundColor: WidgetStatePropertyAll(AppColors.secondaryForeground),
+          ),
+          child: child,
+        ),
+      AppButtonVariant.outline => OutlinedButton(
+          onPressed: isLoading ? null : onPressed,
+          style: style,
+          child: child,
+        ),
+      AppButtonVariant.ghost => TextButton(
+          onPressed: isLoading ? null : onPressed,
+          style: style,
+          child: child,
+        ),
+    };
+  }
+}
+
+
+// =============================================================================
+// NAVIGATION TEMPLATE
+// =============================================================================
+
+// lib/shared/widgets/navigation/app_nav.dart
+
+import 'package:flutter/material.dart';
+import 'package:my_app/core/theme/theme.dart';
+
+/// Main navigation widget with responsive behavior
+class AppNav extends StatelessWidget {
+  final Widget logo;
+  final List<NavItem> items;
+  final VoidCallback? onCtaTap;
+  final String? ctaLabel;
+
+  const AppNav({
+    super.key,
+    required this.logo,
+    required this.items,
+    this.onCtaTap,
+    this.ctaLabel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 64,
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.screenPadding),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: AppColors.border)),
+      ),
+      child: Row(
+        children: [
+          logo,
+          Spacer(),
+          // Desktop menu
+          ...items.map((item) => Padding(
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                child: TextButton(
+                  onPressed: item.onTap,
+                  child: Text(
+                    item.label,
+                    style: AppTypography.labelMedium.copyWith(
+                      color: AppColors.mutedForeground,
+                    ),
+                  ),
+                ),
+              )),
+          if (ctaLabel != null && onCtaTap != null) ...[
+            SizedBox(width: AppSpacing.md),
+            AppButton(
+              label: ctaLabel!,
+              onPressed: onCtaTap,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class NavItem {
+  final String label;
+  final VoidCallback? onTap;
+
+  const NavItem({required this.label, this.onTap});
+}

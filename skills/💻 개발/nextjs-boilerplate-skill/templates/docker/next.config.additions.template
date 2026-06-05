@@ -1,0 +1,4 @@
+// Add to next.config.ts for Docker standalone output
+{
+  output: 'standalone',
+}

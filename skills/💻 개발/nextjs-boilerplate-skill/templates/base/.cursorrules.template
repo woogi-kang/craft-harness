@@ -1,0 +1,122 @@
+# Cursor Rules for {{PROJECT_NAME}}
+
+## Project Context
+
+This is a Next.js 15 project using:
+- TypeScript (strict mode)
+- Tailwind CSS + shadcn/ui
+- App Router with Server Components
+
+{{#CLEAN_ARCHITECTURE}}
+## Architecture: Clean Architecture
+
+The project follows Clean Architecture pattern:
+- `domain/` - Business entities and rules (NO external dependencies)
+- `application/` - Use cases and port interfaces
+- `infrastructure/` - External implementations (DB, APIs)
+- `presentation/` - UI components and controllers
+
+When generating code:
+1. Put business logic in domain/
+2. Put use cases in application/use-cases/
+3. Put DB/API implementations in infrastructure/
+4. Keep app/ thin - just routing and composition
+{{/CLEAN_ARCHITECTURE}}
+
+## Code Style
+
+- Use TypeScript strict mode
+- Prefer functional components with hooks
+- Use Tailwind CSS for styling
+- Follow React Server Components patterns
+
+## File Naming
+
+- Components: PascalCase.tsx (e.g., UserProfile.tsx)
+- Utilities: camelCase.ts (e.g., formatDate.ts)
+- Types: types.ts or *.types.ts
+- Tests: *.test.ts or *.spec.ts
+
+## Imports
+
+Use absolute imports with @/ prefix:
+```typescript
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+```
+
+Group imports in this order:
+1. React/Next.js
+2. External packages
+3. Internal modules (@/)
+4. Types
+
+## Patterns
+
+### Server vs Client Components
+
+```typescript
+// Server Component (default) - no directive needed
+export default function ServerComponent() {
+  return <div>Server rendered</div>
+}
+
+// Client Component - only when needed
+'use client'
+export function ClientComponent() {
+  const [state, setState] = useState()
+  return <div>Client rendered</div>
+}
+```
+
+### Server Actions
+
+```typescript
+'use server'
+
+export async function createUser(formData: FormData) {
+  // Validate
+  // Execute use case
+  // Revalidate
+  revalidatePath('/users')
+}
+```
+
+{{#SUPABASE}}
+### Supabase
+
+```typescript
+// Server Component
+import { createClient } from '@/lib/supabase/server'
+
+export default async function Page() {
+  const supabase = await createClient()
+  const { data } = await supabase.from('table').select()
+}
+
+// Client Component
+'use client'
+import { createClient } from '@/lib/supabase/client'
+
+export function ClientComponent() {
+  const supabase = createClient()
+}
+```
+{{/SUPABASE}}
+
+## Don't
+
+- Don't use `any` type
+- Don't add 'use client' unnecessarily
+- Don't use inline styles
+- Don't hardcode strings/numbers
+- Don't skip error handling
+- Don't ignore TypeScript errors
+
+## Do
+
+- Do use proper TypeScript types
+- Do handle loading and error states
+- Do use semantic HTML
+- Do consider accessibility
+- Do write meaningful commit messages

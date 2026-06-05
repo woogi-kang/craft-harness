@@ -1,0 +1,707 @@
+// Component Template for Figma → Next.js Conversion
+// Usage: Replace placeholders with actual values
+// Version: 2.0 - Enhanced with accessibility, security, and best practices
+
+// =============================================================================
+// TEMPLATE GUIDELINES
+// =============================================================================
+
+/**
+ * Best Practices Checklist (MUST follow):
+ *
+ * 1. 'use client' Directive
+ *    - Only add when component uses: useState, useEffect, event handlers, browser APIs
+ *    - Server Components (default) are preferred for data fetching and static content
+ *
+ * 2. Accessibility (WCAG 2.1 AA)
+ *    - Semantic HTML: <section>, <article>, <nav>, <main>, <header>, <footer>
+ *    - ARIA labels for interactive elements without visible text
+ *    - Focus visible states: focus-visible:ring-2 focus-visible:ring-ring
+ *    - Touch targets: min-h-[44px] min-w-[44px]
+ *    - Skip links for keyboard navigation
+ *
+ * 3. Motion & Animation
+ *    - Always include motion-reduce: motion-reduce:transition-none
+ *
+ * 4. Images
+ *    - Always use next/image with proper sizes attribute
+ *    - Provide meaningful alt text (empty for decorative)
+ *    - Use priority for LCP images
+ *
+ * 5. Security
+ *    - Never use dangerouslySetInnerHTML without sanitization
+ *    - Validate URLs with sanitizeUrl()
+ *    - External links: rel="noopener noreferrer"
+ */
+
+
+// =============================================================================
+// SECTION COMPONENT TEMPLATE (Server Component)
+// =============================================================================
+
+/**
+ * Section Component Template
+ *
+ * Placeholders:
+ * - {{ComponentName}}: PascalCase component name (e.g., HeroSection)
+ * - {{componentName}}: camelCase component name (e.g., heroSection)
+ * - {{description}}: Component description
+ * - {{props}}: Props interface fields
+ * - {{content}}: JSX content
+ * - {{tailwindClasses}}: Tailwind CSS classes
+ */
+
+// src/components/sections/{{componentName}}.tsx
+
+import { cn } from '@/lib/utils';
+
+interface {{ComponentName}}Props {
+  {{props}}
+  className?: string;
+}
+
+export function {{ComponentName}}({
+  {{propsDestructure}}
+  className,
+}: {{ComponentName}}Props) {
+  return (
+    <section
+      aria-labelledby="{{componentName}}-heading"
+      className={cn(
+        '{{tailwindClasses}}',
+        className
+      )}
+    >
+      <div className="container mx-auto px-4">
+        {{content}}
+      </div>
+    </section>
+  );
+}
+
+
+// =============================================================================
+// FEATURE CARD TEMPLATE (Server Component)
+// =============================================================================
+
+// src/components/features/{{componentName}}.tsx
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { LucideIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+interface {{ComponentName}}Props {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  className?: string;
+}
+
+export function {{ComponentName}}({
+  icon: Icon,
+  title,
+  description,
+  className,
+}: {{ComponentName}}Props) {
+  return (
+    <Card
+      className={cn(
+        'hover:shadow-lg transition-shadow motion-reduce:transition-none',
+        'focus-within:ring-2 focus-within:ring-ring',
+        className
+      )}
+    >
+      <CardHeader>
+        <div
+          className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4"
+          aria-hidden="true"
+        >
+          <Icon className="w-6 h-6 text-primary" aria-hidden="true" />
+        </div>
+        <CardTitle className="text-xl">{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-muted-foreground">{description}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+
+// =============================================================================
+// HERO SECTION TEMPLATE (Server Component - No client interactivity needed)
+// =============================================================================
+
+// src/components/sections/hero-section.tsx
+
+import Image from 'next/image';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+
+interface HeroSectionProps {
+  badge?: string;
+  title: string;
+  subtitle: string;
+  primaryCta: {
+    text: string;
+    href: string;
+  };
+  secondaryCta?: {
+    text: string;
+    href: string;
+  };
+  image?: {
+    src: string;
+    alt: string;
+  };
+  className?: string;
+}
+
+export function HeroSection({
+  badge,
+  title,
+  subtitle,
+  primaryCta,
+  secondaryCta,
+  image,
+  className,
+}: HeroSectionProps) {
+  return (
+    <section
+      aria-labelledby="hero-heading"
+      className={cn(
+        'relative py-20 lg:py-32',
+        className
+      )}
+    >
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col lg:flex-row items-center gap-12">
+          {/* Content */}
+          <div className="flex-1 text-center lg:text-left">
+            {badge && (
+              <Badge className="mb-4">{badge}</Badge>
+            )}
+            <h1
+              id="hero-heading"
+              className="text-4xl lg:text-6xl font-bold mb-6 text-foreground"
+            >
+              {title}
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8 max-w-xl mx-auto lg:mx-0">
+              {subtitle}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Button
+                asChild
+                size="lg"
+                className="min-h-[44px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                <Link href={primaryCta.href}>
+                  {primaryCta.text}
+                </Link>
+              </Button>
+              {secondaryCta && (
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="min-h-[44px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <Link href={secondaryCta.href}>
+                    {secondaryCta.text}
+                  </Link>
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Image */}
+          {image && (
+            <div className="flex-1">
+              <div className="relative aspect-video">
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  className="object-cover rounded-xl shadow-2xl"
+                  priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 600px"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+// =============================================================================
+// CTA SECTION TEMPLATE (Server Component)
+// =============================================================================
+
+// src/components/sections/cta-section.tsx
+
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
+interface CTASectionProps {
+  title: string;
+  subtitle: string;
+  primaryCta: {
+    text: string;
+    href: string;
+  };
+  secondaryCta?: {
+    text: string;
+    href: string;
+  };
+  variant?: 'default' | 'primary';
+  className?: string;
+}
+
+export function CTASection({
+  title,
+  subtitle,
+  primaryCta,
+  secondaryCta,
+  variant = 'default',
+  className,
+}: CTASectionProps) {
+  const isPrimary = variant === 'primary';
+
+  return (
+    <section
+      aria-labelledby="cta-heading"
+      className={cn(
+        'py-20',
+        isPrimary ? 'bg-primary text-primary-foreground' : 'bg-muted',
+        className
+      )}
+    >
+      <div className="container mx-auto px-4 text-center">
+        <h2
+          id="cta-heading"
+          className="text-3xl lg:text-4xl font-bold mb-6"
+        >
+          {title}
+        </h2>
+        <p className={cn(
+          'text-xl mb-8 max-w-2xl mx-auto',
+          isPrimary ? 'opacity-90' : 'text-muted-foreground'
+        )}>
+          {subtitle}
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button
+            asChild
+            size="lg"
+            variant={isPrimary ? 'secondary' : 'default'}
+            className="min-h-[44px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            <Link href={primaryCta.href}>
+              {primaryCta.text}
+            </Link>
+          </Button>
+          {secondaryCta && (
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className={cn(
+                'min-h-[44px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                isPrimary && 'border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary'
+              )}
+            >
+              <Link href={secondaryCta.href}>
+                {secondaryCta.text}
+              </Link>
+            </Button>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+// =============================================================================
+// NAVIGATION TEMPLATE (Client Component - Required for state)
+// =============================================================================
+
+// src/components/layout/nav.tsx
+
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Menu, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+interface NavItem {
+  label: string;
+  href: string;
+}
+
+interface NavProps {
+  logo: React.ReactNode;
+  items: NavItem[];
+  ctaText?: string;
+  ctaHref?: string;
+  className?: string;
+}
+
+export function Nav({
+  logo,
+  items,
+  ctaText,
+  ctaHref,
+  className,
+}: NavProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Close menu on Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+        buttonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen]);
+
+  // Focus trap in mobile menu
+  useEffect(() => {
+    if (isOpen && menuRef.current) {
+      const focusableElements = menuRef.current.querySelectorAll(
+        'a[href], button:not([disabled])'
+      );
+      const firstElement = focusableElements[0] as HTMLElement;
+      firstElement?.focus();
+    }
+  }, [isOpen]);
+
+  return (
+    <nav className={cn('border-b', className)} role="navigation" aria-label="Main navigation">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link
+            href="/"
+            className="flex items-center focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
+          >
+            {logo}
+          </Link>
+
+          {/* Desktop Menu */}
+          <div className="hidden lg:flex items-center gap-8">
+            {items.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm py-2"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+
+          {/* Desktop CTA */}
+          {ctaText && ctaHref && (
+            <div className="hidden lg:block">
+              <Button
+                asChild
+                className="min-h-[44px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                <Link href={ctaHref}>{ctaText}</Link>
+              </Button>
+            </div>
+          )}
+
+          {/* Mobile Menu Button */}
+          <Button
+            ref={buttonRef}
+            variant="ghost"
+            size="icon"
+            className="lg:hidden min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-expanded={isOpen}
+            aria-controls="mobile-menu"
+            aria-label={isOpen ? 'Close menu' : 'Open menu'}
+          >
+            {isOpen ? (
+              <X className="w-6 h-6" aria-hidden="true" />
+            ) : (
+              <Menu className="w-6 h-6" aria-hidden="true" />
+            )}
+          </Button>
+        </div>
+
+        {/* Mobile Menu */}
+        {isOpen && (
+          <div
+            id="mobile-menu"
+            ref={menuRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
+            className="lg:hidden py-4 border-t"
+          >
+            <div className="flex flex-col gap-2">
+              {items.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground py-3 px-2 rounded-md focus-visible:ring-2 focus-visible:ring-ring min-h-[44px] flex items-center"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              {ctaText && ctaHref && (
+                <Button asChild className="mt-4 min-h-[44px]">
+                  <Link href={ctaHref}>{ctaText}</Link>
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+}
+
+
+// =============================================================================
+// FOOTER TEMPLATE (Server Component)
+// =============================================================================
+
+// src/components/layout/footer.tsx
+
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+
+interface FooterLink {
+  label: string;
+  href: string;
+}
+
+interface FooterSection {
+  title: string;
+  links: FooterLink[];
+}
+
+interface FooterProps {
+  logo: React.ReactNode;
+  description?: string;
+  sections: FooterSection[];
+  copyright: string;
+  className?: string;
+}
+
+export function Footer({
+  logo,
+  description,
+  sections,
+  copyright,
+  className,
+}: FooterProps) {
+  return (
+    <footer className={cn('border-t py-12', className)} role="contentinfo">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-1">
+            <Link
+              href="/"
+              className="inline-block mb-4 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
+            >
+              {logo}
+            </Link>
+            {description && (
+              <p className="text-sm text-muted-foreground max-w-xs">
+                {description}
+              </p>
+            )}
+          </div>
+
+          {/* Link Sections */}
+          {sections.map((section) => (
+            <nav key={section.title} aria-label={section.title}>
+              <h3 className="font-semibold mb-4">{section.title}</h3>
+              <ul className="space-y-2">
+                {section.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+        </div>
+
+        {/* Bottom */}
+        <div className="border-t pt-8">
+          <p className="text-sm text-muted-foreground text-center">
+            {copyright}
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+
+// =============================================================================
+// ACCESSIBLE BUTTON TEMPLATE (with loading state)
+// =============================================================================
+
+// src/components/ui/accessible-button.tsx
+
+import { Button, ButtonProps } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { forwardRef } from 'react';
+
+interface AccessibleButtonProps extends ButtonProps {
+  loading?: boolean;
+  loadingText?: string;
+}
+
+export const AccessibleButton = forwardRef<HTMLButtonElement, AccessibleButtonProps>(
+  ({ children, loading, loadingText = 'Loading...', disabled, className, ...props }, ref) => {
+    return (
+      <Button
+        ref={ref}
+        disabled={disabled || loading}
+        aria-busy={loading}
+        aria-disabled={disabled || loading}
+        className={cn(
+          'min-h-[44px] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+          className
+        )}
+        {...props}
+      >
+        {loading && (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+        )}
+        {loading ? loadingText : children}
+      </Button>
+    );
+  }
+);
+
+AccessibleButton.displayName = 'AccessibleButton';
+
+
+// =============================================================================
+// SKIP LINK TEMPLATE (for keyboard navigation)
+// =============================================================================
+
+// src/components/layout/skip-link.tsx
+
+export function SkipLink() {
+  return (
+    <a
+      href="#main-content"
+      className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-background focus:text-foreground focus:ring-2 focus:ring-ring focus:rounded-md"
+    >
+      Skip to main content
+    </a>
+  );
+}
+
+// Usage in app/layout.tsx:
+// <body>
+//   <SkipLink />
+//   <Header />
+//   <main id="main-content" tabIndex={-1}>
+//     {children}
+//   </main>
+//   <Footer />
+// </body>
+
+
+// =============================================================================
+// SAFE EXTERNAL LINK TEMPLATE (with security)
+// =============================================================================
+
+// src/components/ui/safe-link.tsx
+
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+
+interface SafeLinkProps {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+  external?: boolean;
+}
+
+// URL validation
+function isValidUrl(url: string): boolean {
+  const blockedProtocols = ['javascript:', 'data:', 'vbscript:'];
+
+  try {
+    const parsed = new URL(url, 'https://example.com');
+    return !blockedProtocols.includes(parsed.protocol);
+  } catch {
+    return false;
+  }
+}
+
+export function SafeLink({
+  href,
+  children,
+  className,
+  external = false,
+}: SafeLinkProps) {
+  // Validate URL
+  const safeHref = isValidUrl(href) ? href : '#';
+
+  // Detect external link
+  const isExternal = external || (safeHref.startsWith('http') && !safeHref.includes(process.env.NEXT_PUBLIC_SITE_URL || ''));
+
+  if (isExternal) {
+    return (
+      <a
+        href={safeHref}
+        className={cn(
+          'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm',
+          className
+        )}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <Link
+      href={safeHref}
+      className={cn(
+        'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm',
+        className
+      )}
+    >
+      {children}
+    </Link>
+  );
+}

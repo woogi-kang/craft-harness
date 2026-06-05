@@ -1,0 +1,8 @@
+interface:
+  display_name: "Design Harness"
+  short_description: "Modern UI/UX design and anti-slop QA"
+  brand_color: "#0F766E"
+  default_prompt: "Use $design-harness to redesign this interface with a clear register, anti-slop preflight, and responsive QA."
+
+policy:
+  allow_implicit_invocation: true

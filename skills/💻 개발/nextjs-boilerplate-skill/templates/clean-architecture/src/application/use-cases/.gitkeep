@@ -1,0 +1,25 @@
+# Use Cases
+#
+# Place your application use cases here.
+# Use Cases should:
+# - Orchestrate domain entities
+# - Use ports (interfaces) for external dependencies
+# - Return DTOs, not domain entities
+#
+# Example:
+# export class CreateUserUseCase {
+#   constructor(
+#     private readonly userRepository: IUserRepository,
+#     private readonly emailService: IEmailService,
+#   ) {}
+#
+#   async execute(dto: CreateUserDTO): Promise<UserResponseDTO> {
+#     const email = Email.create(dto.email)
+#     const user = User.create({ email, name: dto.name })
+#
+#     await this.userRepository.save(user)
+#     await this.emailService.sendWelcome(email)
+#
+#     return UserResponseDTO.fromEntity(user)
+#   }
+# }

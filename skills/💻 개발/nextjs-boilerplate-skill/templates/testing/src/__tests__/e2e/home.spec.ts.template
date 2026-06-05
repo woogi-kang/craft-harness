@@ -1,0 +1,36 @@
+import { test, expect } from '@playwright/test'
+
+test.describe('Home Page', () => {
+  test('should display the project name', async ({ page }) => {
+    await page.goto('/')
+
+    // Check that the page has loaded
+    await expect(page).toHaveTitle(/{{PROJECT_NAME}}/)
+
+    // Check for main heading
+    const heading = page.getByRole('heading', { level: 1 })
+    await expect(heading).toBeVisible()
+  })
+
+  test('should have working navigation links', async ({ page }) => {
+    await page.goto('/')
+
+    // Find and click the documentation link
+    const docsLink = page.getByRole('link', { name: /documentation/i })
+    await expect(docsLink).toBeVisible()
+
+    // Verify link has correct href
+    await expect(docsLink).toHaveAttribute('href', 'https://nextjs.org/docs')
+  })
+
+  test('should be responsive', async ({ page }) => {
+    // Test desktop
+    await page.setViewportSize({ width: 1280, height: 720 })
+    await page.goto('/')
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+
+    // Test mobile
+    await page.setViewportSize({ width: 375, height: 667 })
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  })
+})

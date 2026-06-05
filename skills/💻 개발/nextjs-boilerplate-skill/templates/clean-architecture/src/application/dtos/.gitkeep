@@ -1,0 +1,24 @@
+# Data Transfer Objects (DTOs)
+#
+# Define DTOs for input/output of use cases here.
+# DTOs should:
+# - Be plain objects (no methods with business logic)
+# - Validate input data (using zod recommended)
+# - Convert to/from domain entities
+#
+# Example:
+# import { z } from 'zod'
+#
+# export const createUserSchema = z.object({
+#   email: z.string().email(),
+#   name: z.string().min(1).max(100),
+# })
+#
+# export type CreateUserDTO = z.infer<typeof createUserSchema>
+#
+# export interface UserResponseDTO {
+#   id: string
+#   email: string
+#   name: string
+#   createdAt: string
+# }

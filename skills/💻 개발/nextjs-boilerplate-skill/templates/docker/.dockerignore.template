@@ -1,0 +1,33 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Next.js
+.next
+out
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+
+# Tests
+coverage
+playwright-report
+test-results
+
+# Misc
+*.md
+!README.md
+.env*
+!.env.example
+*.log
+.DS_Store
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore

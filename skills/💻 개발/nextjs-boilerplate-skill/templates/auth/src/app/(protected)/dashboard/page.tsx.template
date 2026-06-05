@@ -1,0 +1,50 @@
+import { auth } from "@/lib/auth";
+
+export default async function DashboardPage() {
+  const session = await auth();
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Welcome back, {session?.user?.name || session?.user?.email}!
+        </p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-lg border bg-card p-6">
+          <div className="text-sm font-medium text-muted-foreground">
+            Total Users
+          </div>
+          <div className="mt-2 text-2xl font-bold">1,234</div>
+        </div>
+        <div className="rounded-lg border bg-card p-6">
+          <div className="text-sm font-medium text-muted-foreground">
+            Active Sessions
+          </div>
+          <div className="mt-2 text-2xl font-bold">56</div>
+        </div>
+        <div className="rounded-lg border bg-card p-6">
+          <div className="text-sm font-medium text-muted-foreground">
+            Revenue
+          </div>
+          <div className="mt-2 text-2xl font-bold">$12,345</div>
+        </div>
+        <div className="rounded-lg border bg-card p-6">
+          <div className="text-sm font-medium text-muted-foreground">
+            Growth
+          </div>
+          <div className="mt-2 text-2xl font-bold">+12.5%</div>
+        </div>
+      </div>
+
+      <div className="rounded-lg border bg-card p-6">
+        <h2 className="text-lg font-semibold">Session Info</h2>
+        <pre className="mt-4 overflow-auto rounded bg-muted p-4 text-sm">
+          {JSON.stringify(session, null, 2)}
+        </pre>
+      </div>
+    </div>
+  );
+}

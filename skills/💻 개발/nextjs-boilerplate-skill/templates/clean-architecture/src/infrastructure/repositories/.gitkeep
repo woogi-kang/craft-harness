@@ -1,0 +1,30 @@
+# Repository Implementations
+#
+# Implement repository interfaces here.
+# Implementations should:
+# - Implement the port interface from application layer
+# - Handle database-specific logic
+# - Map between database models and domain entities
+#
+# Example:
+# export class DrizzleUserRepository implements IUserRepository {
+#   constructor(private readonly db: Database) {}
+#
+#   async findById(id: UserId): Promise<User | null> {
+#     const row = await this.db
+#       .select()
+#       .from(users)
+#       .where(eq(users.id, id.value))
+#       .get()
+#
+#     return row ? this.toDomain(row) : null
+#   }
+#
+#   private toDomain(row: typeof users.$inferSelect): User {
+#     return User.reconstitute({
+#       id: UserId.from(row.id),
+#       email: Email.create(row.email),
+#       name: row.name,
+#     })
+#   }
+# }

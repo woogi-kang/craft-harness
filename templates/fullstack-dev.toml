@@ -1,0 +1,90 @@
+[team]
+name = "fullstack-dev"
+description = "Full-stack: backend API + frontend UI + tester"
+
+[[agents]]
+name = "Backend"
+role = "API 엔드포인트 구현"
+task_template = """
+{goal}에 대한 백엔드 API를 구현하세요.
+
+## 기술 스택
+- FastAPI + SQLAlchemy
+- Clean Architecture 패턴
+- Pydantic 모델로 요청/응답 정의
+
+## 산출물
+- 구현된 API 엔드포인트
+- handoff.md에 엔드포인트 스펙 기록 (URL, method, request/response schema)
+
+## 지침
+- API 엔드포인트와 비즈니스 로직에 집중
+- 테스트는 별도 워커가 담당하므로 작성하지 마세요
+- 프로젝트의 기존 백엔드 디렉토리 구조를 따르세요
+"""
+
+[[agents]]
+name = "Frontend"
+role = "UI 컴포넌트 구현"
+blocked_by = ["Backend"]
+task_template = """
+{goal}에 대한 프론트엔드 UI를 구현하세요.
+
+## 기술 스택
+- Next.js App Router (서버 컴포넌트 기본)
+- TanStack Query (서버 상태)
+- shadcn/ui (컴포넌트)
+- Tailwind CSS (스타일링)
+
+## 지침
+- Backend 워커가 만든 API 엔드포인트에 연동
+- handoff.md에서 API 스펙을 확인하세요
+- 프로젝트의 기존 프론트엔드 디렉토리 구조를 따르세요
+"""
+
+[[agents]]
+name = "Tester"
+role = "테스트 작성 및 실행"
+blocked_by = ["Backend", "Frontend"]
+task_template = """
+{goal}에 대한 테스트를 작성하고 실행하세요.
+
+## 테스트 유형
+- 단위 테스트 (핵심 로직)
+- 통합 테스트 (API 엔드포인트)
+- E2E 테스트 (주요 사용자 플로우)
+
+## 지침
+- pytest (백엔드) + vitest (프론트엔드)
+- 선행 워커들의 handoff.md를 참고하여 테스트 대상 파악
+- tests/ 디렉토리만 수정
+"""
+
+[[agents]]
+name = "QA"
+role = "라이브 QA — Playwright로 기능 검증 및 버그 리포트"
+blocked_by = ["Backend", "Frontend", "Tester"]
+task_template = """
+구현된 기능을 Playwright로 라이브 테스트하세요.
+
+## 검증 대상
+- 선행 워커들의 handoff.md에서 구현 내용 확인
+- 각 워커의 success_criteria를 기준으로 테스트
+
+## 도구
+Playwright MCP를 사용하여:
+1. 앱을 브라우저에서 실행하고 접속
+2. 주요 사용자 플로우를 실제로 수행
+3. 각 단계에서 스크린샷 촬영
+4. API 응답 상태 코드 확인
+
+## 판정 기준
+- critical FAIL 1개 → 전체 FAIL
+- major FAIL 2개+ → 전체 FAIL
+- 문제 발견 시 즉시 FAIL로 기록 (자기 설득 금지)
+- 표면적 테스트 금지 — 반드시 사용자 플로우를 끝까지 수행
+
+## 산출물
+- handoff.md에 기준별 PASS/FAIL + 상세 버그 리포트 기록
+- 재작업 필요 항목 목록 (워커별로 분류)
+"""

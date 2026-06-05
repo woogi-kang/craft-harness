@@ -1,0 +1,25 @@
+# External Service Implementations
+#
+# Implement external service interfaces here.
+# Services should:
+# - Implement port interfaces from application layer
+# - Handle external API calls, email sending, etc.
+# - Handle retries and error mapping
+#
+# Example:
+# export class ResendEmailService implements IEmailService {
+#   private client: Resend
+#
+#   constructor(apiKey: string) {
+#     this.client = new Resend(apiKey)
+#   }
+#
+#   async sendWelcome(email: Email): Promise<void> {
+#     await this.client.emails.send({
+#       from: 'noreply@example.com',
+#       to: email.toString(),
+#       subject: 'Welcome!',
+#       html: '<h1>Welcome to our app!</h1>',
+#     })
+#   }
+# }

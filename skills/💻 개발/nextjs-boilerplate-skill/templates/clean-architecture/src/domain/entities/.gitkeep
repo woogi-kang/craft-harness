@@ -1,0 +1,20 @@
+# Domain Entities
+#
+# Place your domain entities here.
+# Entities should:
+# - Have no external dependencies (no framework imports)
+# - Encapsulate business rules
+# - Use Value Objects for validation
+#
+# Example:
+# export class User {
+#   private constructor(private readonly props: UserProps) {}
+#
+#   static create(props: CreateUserProps): User {
+#     // validation logic
+#     return new User({ ...props, id: UserId.generate() })
+#   }
+#
+#   get id(): UserId { return this.props.id }
+#   get email(): Email { return this.props.email }
+# }

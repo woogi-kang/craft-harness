@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/anthropic-tools/main/schemas/mcp.schema.json",
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-filesystem", "./src"],
+      "description": "File system access for the src directory"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@anthropic-ai/mcp-server-playwright"],
+      "description": "Browser automation and testing"
+    }
+  }
+}

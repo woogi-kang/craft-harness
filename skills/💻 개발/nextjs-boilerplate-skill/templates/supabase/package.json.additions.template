@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "supabase:start": "npx supabase start",
+    "supabase:stop": "npx supabase stop",
+    "supabase:status": "npx supabase status",
+    "supabase:types": "npx supabase gen types typescript --local > src/lib/supabase/types.ts"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.5.0",
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}

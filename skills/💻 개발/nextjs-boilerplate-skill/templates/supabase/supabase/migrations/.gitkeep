@@ -1,0 +1,10 @@
+# Supabase Migrations
+#
+# Create a new migration:
+# npx supabase migration new migration_name
+#
+# Apply migrations:
+# npx supabase db push
+#
+# Reset database:
+# npx supabase db reset

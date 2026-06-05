@@ -1,0 +1,24 @@
+# Controllers (Server Actions & API Routes)
+#
+# Place your server actions and API route handlers here.
+# Controllers should:
+# - Handle HTTP request/response
+# - Validate input (or use DTO validation)
+# - Call use cases
+# - Handle errors and return appropriate responses
+#
+# Example (Server Action):
+# 'use server'
+#
+# export async function createUser(formData: FormData) {
+#   const validated = createUserSchema.parse({
+#     email: formData.get('email'),
+#     name: formData.get('name'),
+#   })
+#
+#   const useCase = container.get<CreateUserUseCase>(TOKENS.CREATE_USER)
+#   const result = await useCase.execute(validated)
+#
+#   revalidatePath('/users')
+#   return result
+# }

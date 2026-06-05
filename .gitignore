@@ -1,0 +1,58 @@
+# OS and editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage*.json
+*.egg-info/
+
+# Node and build outputs
+node_modules/
+dist/
+build/
+.next/
+coverage/
+
+# Local state
+.env
+.env.*
+!.env.example
+.codex/
+.orchestration/
+.craft/runs/
+.craft/tmp/
+logs/
+
+# Private or generated workspace data
+workspace/
+work-social/
+*.local.*
+settings.local.json
+
+# Secrets and credentials
+*.pem
+*.p12
+*.pfx
+*.jks
+*.secret.*
+*.key.*
+*secret*
+*api-key*
+private-key*
+
+# Harness-local runtime folders
+sessions/
+memory/
+checkpoints/
+plans/

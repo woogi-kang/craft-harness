@@ -1,0 +1,54 @@
+import { auth } from "@/lib/auth";
+import { NextResponse } from "next/server";
+
+/**
+ * Auth.js Middleware
+ *
+ * 보호된 라우트에 대한 인증 검사를 수행합니다.
+ * 로그인하지 않은 사용자는 /login으로 리디렉션됩니다.
+ */
+export default auth((req) => {
+  const { nextUrl } = req;
+  const isLoggedIn = !!req.auth;
+
+  // 공개 라우트 정의
+  const publicRoutes = ["/", "/login", "/register"];
+  const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+
+  // API 라우트는 별도 처리
+  const isApiRoute = nextUrl.pathname.startsWith("/api");
+
+  // 인증 관련 API는 항상 허용
+  const isAuthApi = nextUrl.pathname.startsWith("/api/auth");
+
+  if (isAuthApi) {
+    return NextResponse.next();
+  }
+
+  // 로그인하지 않은 사용자가 보호된 라우트 접근 시
+  if (!isLoggedIn && !isPublicRoute && !isApiRoute) {
+    const loginUrl = new URL("/login", nextUrl.origin);
+    loginUrl.searchParams.set("callbackUrl", nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // 로그인한 사용자가 로그인/회원가입 페이지 접근 시
+  if (isLoggedIn && (nextUrl.pathname === "/login" || nextUrl.pathname === "/register")) {
+    return NextResponse.redirect(new URL("/dashboard", nextUrl.origin));
+  }
+
+  return NextResponse.next();
+});
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
+};

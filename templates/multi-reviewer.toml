@@ -1,0 +1,72 @@
+[team]
+name = "multi-reviewer"
+description = "멀티 관점 리뷰: 코드 + 아키텍처 + 보안 → 통합"
+
+[[agents]]
+name = "Code-Reviewer"
+role = "코드 품질 리뷰"
+task_template = """
+{goal}에 대한 코드 리뷰를 수행하세요.
+
+## 관점
+- 코드 품질 (가독성, 유지보수성)
+- 버그 가능성
+- 테스트 커버리지
+- 코딩 컨벤션 준수
+
+## 산출물
+- 파일별 리뷰 코멘트
+- 심각도별 분류 (critical/major/minor/suggestion)
+"""
+
+[[agents]]
+name = "Arch-Reviewer"
+role = "아키텍처 리뷰"
+task_template = """
+{goal}에 대한 아키텍처 리뷰를 수행하세요.
+
+## 관점
+- 설계 패턴 적절성
+- 의존성 방향 (Clean Architecture)
+- 확장성 / 유지보수성
+- API 설계 품질
+
+## 산출물
+- 아키텍처 평가 보고서
+- 개선 제안 (우선순위별)
+"""
+
+[[agents]]
+name = "Security-Reviewer"
+role = "보안 리뷰"
+task_template = """
+{goal}에 대한 보안 리뷰를 수행하세요.
+
+## 관점
+- OWASP Top 10 취약점
+- 인증/인가 로직
+- 입력 검증
+- 민감 정보 노출
+
+## 산출물
+- 보안 취약점 목록 (CVSS 점수)
+- 즉시 수정 필요 항목
+"""
+
+[[agents]]
+name = "Consolidator"
+role = "리뷰 통합 및 합의"
+blocked_by = ["Code-Reviewer", "Arch-Reviewer", "Security-Reviewer"]
+task_template = """
+{goal}에 대한 리뷰 결과를 통합하세요.
+
+## 작업
+- 3개 리뷰어의 handoff.md를 종합
+- 중복/충돌 의견 해소
+- 우선순위별 액션 아이템 정리
+- 최종 리뷰 보고서 작성
+
+## 산출물
+- 통합 리뷰 보고서 (docs/에 저장)
+- 액션 아이템 체크리스트
+"""

@@ -1,0 +1,25 @@
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
+  // Enable React strict mode for better development experience
+  reactStrictMode: true,
+
+  // Image optimization settings
+  images: {
+    remotePatterns: [
+      // Add your image domains here
+      // {
+      //   protocol: 'https',
+      //   hostname: 'example.com',
+      // },
+    ],
+  },
+
+  // Experimental features
+  experimental: {
+    // Enable Server Actions (stable in Next.js 15)
+    // typedRoutes: true, // Enable if you want type-safe routes
+  },
+}
+
+export default nextConfig

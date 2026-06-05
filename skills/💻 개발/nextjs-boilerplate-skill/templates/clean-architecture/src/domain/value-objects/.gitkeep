@@ -1,0 +1,25 @@
+# Value Objects
+#
+# Place your value objects here.
+# Value Objects should:
+# - Be immutable
+# - Validate on creation
+# - Have no identity (compared by value)
+#
+# Example:
+# export class Email {
+#   private constructor(private readonly value: string) {}
+#
+#   static create(email: string): Email {
+#     if (!this.isValid(email)) {
+#       throw new ValidationError('Invalid email format')
+#     }
+#     return new Email(email.toLowerCase())
+#   }
+#
+#   private static isValid(email: string): boolean {
+#     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+#   }
+#
+#   toString(): string { return this.value }
+# }

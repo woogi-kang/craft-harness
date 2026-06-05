@@ -1,0 +1,29 @@
+import { migrate } from "drizzle-orm/postgres-js/migrator";
+import { db, connection } from "./client";
+
+/**
+ * Database Migration Script
+ *
+ * 사용법:
+ * npx tsx src/infrastructure/database/migrate.ts
+ *
+ * 또는 package.json scripts에 추가:
+ * "db:migrate": "tsx src/infrastructure/database/migrate.ts"
+ */
+async function runMigrations() {
+  console.log("Running migrations...");
+
+  try {
+    await migrate(db, {
+      migrationsFolder: "./drizzle/migrations",
+    });
+    console.log("Migrations completed successfully");
+  } catch (error) {
+    console.error("Migration failed:", error);
+    process.exit(1);
+  } finally {
+    await connection.end();
+  }
+}
+
+runMigrations();

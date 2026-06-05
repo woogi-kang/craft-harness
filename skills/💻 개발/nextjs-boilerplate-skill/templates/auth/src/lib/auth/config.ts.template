@@ -1,0 +1,45 @@
+import type { NextAuthConfig } from "next-auth";
+import { providers } from "./providers";
+
+export const authConfig: NextAuthConfig = {
+  providers,
+  pages: {
+    signIn: "/login",
+    // signOut: "/logout",
+    // error: "/error",
+    // verifyRequest: "/verify-request",
+    // newUser: "/register",
+  },
+  callbacks: {
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isOnProtected = nextUrl.pathname.startsWith("/(protected)") ||
+                           !nextUrl.pathname.startsWith("/login") &&
+                           !nextUrl.pathname.startsWith("/register") &&
+                           !nextUrl.pathname.startsWith("/api");
+
+      if (isOnProtected) {
+        if (isLoggedIn) return true;
+        return false; // Redirect to login
+      } else if (isLoggedIn) {
+        return Response.redirect(new URL("/dashboard", nextUrl));
+      }
+      return true;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token && session.user) {
+        session.user.id = token.id as string;
+      }
+      return session;
+    },
+  },
+  session: {
+    strategy: "jwt",
+  },
+};

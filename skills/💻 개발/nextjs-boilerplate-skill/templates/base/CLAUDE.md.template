@@ -1,0 +1,112 @@
+# CLAUDE.md
+
+## Project Overview
+
+**{{PROJECT_NAME}}** - Next.js 15 프로젝트
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript (strict mode)
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Linting**: ESLint + Prettier
+
+{{#CLEAN_ARCHITECTURE}}
+## Architecture
+
+Clean Architecture 패턴을 따릅니다:
+
+```
+src/
+├── app/              # Next.js 진입점 (라우팅)
+├── presentation/     # UI Layer (컴포넌트, 컨트롤러)
+├── application/      # Use Cases, Ports (인터페이스)
+├── domain/           # 엔티티, Value Objects (비즈니스 규칙)
+├── infrastructure/   # 외부 구현체 (DB, API)
+└── di/               # 의존성 주입
+```
+
+### 의존성 규칙
+
+- Domain은 어떤 외부 라이브러리에도 의존하지 않음
+- Application은 Domain에만 의존
+- Infrastructure는 Application의 Port를 구현
+- Presentation은 Application의 Use Case를 호출
+{{/CLEAN_ARCHITECTURE}}
+
+## Commands
+
+```bash
+npm run dev        # 개발 서버 (Turbopack)
+npm run build      # 프로덕션 빌드
+npm run lint       # ESLint 검사
+npm run format     # Prettier 포맷팅
+npm run typecheck  # TypeScript 타입 체크
+{{#TESTING}}
+npm run test       # Vitest 단위 테스트
+npm run test:e2e   # Playwright E2E 테스트
+{{/TESTING}}
+{{#DRIZZLE}}
+npm run db:generate # Drizzle 마이그레이션 생성
+npm run db:migrate  # 마이그레이션 적용
+{{/DRIZZLE}}
+```
+
+## Conventions
+
+### Naming
+
+- **컴포넌트**: PascalCase (e.g., `UserProfile.tsx`)
+- **유틸리티**: camelCase (e.g., `formatDate.ts`)
+- **타입**: PascalCase + interface 선호
+- **상수**: SCREAMING_SNAKE_CASE
+
+### Code Style
+
+- 함수형 컴포넌트 + hooks 사용
+- Server Components 기본, 필요시에만 'use client'
+- Server Actions로 데이터 변경
+- Tailwind CSS utility-first 스타일링
+
+### Imports
+
+```typescript
+// 순서: react → next → external → internal → types
+import { useState } from 'react'
+import Link from 'next/link'
+import { format } from 'date-fns'
+import { Button } from '@/components/ui/button'
+import type { User } from '@/types'
+```
+
+## Key Files
+
+| Path | Purpose |
+|------|---------|
+| `src/app/` | Next.js App Router 페이지 |
+| `src/components/ui/` | shadcn/ui 컴포넌트 |
+| `src/lib/` | 유틸리티 및 설정 |
+{{#CLEAN_ARCHITECTURE}}
+| `src/domain/` | 비즈니스 엔티티 |
+| `src/application/` | Use Cases |
+| `src/infrastructure/` | 외부 서비스 구현 |
+{{/CLEAN_ARCHITECTURE}}
+{{#SUPABASE}}
+| `src/lib/supabase/` | Supabase 클라이언트 |
+{{/SUPABASE}}
+
+## Do's and Don'ts
+
+### Do
+
+- TypeScript strict mode 준수
+- 작은 함수와 컴포넌트 유지
+- 에러 경계 적절히 사용
+- 접근성(a11y) 고려
+
+### Don't
+
+- any 타입 사용 금지
+- 불필요한 'use client' 남발
+- 인라인 스타일 사용
+- 하드코딩된 문자열/숫자

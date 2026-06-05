@@ -1,0 +1,38 @@
+/**
+ * Base class for domain errors
+ * Domain errors represent business rule violations
+ */
+export abstract class DomainError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = this.constructor.name
+    Error.captureStackTrace(this, this.constructor)
+  }
+}
+
+/**
+ * Error when an entity is not found
+ */
+export class EntityNotFoundError extends DomainError {
+  constructor(entityName: string, id: string) {
+    super(`${entityName} with id '${id}' not found`)
+  }
+}
+
+/**
+ * Error when validation fails
+ */
+export class ValidationError extends DomainError {
+  constructor(message: string) {
+    super(message)
+  }
+}
+
+/**
+ * Error when a business rule is violated
+ */
+export class BusinessRuleViolationError extends DomainError {
+  constructor(rule: string) {
+    super(`Business rule violated: ${rule}`)
+  }
+}

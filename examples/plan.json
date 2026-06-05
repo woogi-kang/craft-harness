@@ -1,0 +1,25 @@
+{
+  "session": "example-auth-flow",
+  "base_ref": "HEAD",
+  "workers": [
+    {
+      "name": "Backend",
+      "task": "Draft the API contract for a JWT login flow. Do not modify application code.",
+      "success_criteria": [
+        "Login endpoint request and response schemas are documented",
+        "401 and 422 error cases are documented"
+      ],
+      "eval_type": "api"
+    },
+    {
+      "name": "QA",
+      "task": "Review the Backend handoff against the success criteria and write a QA summary.",
+      "depends_on": ["Backend"],
+      "success_criteria": [
+        "Every Backend success criterion has a PASS or FAIL decision",
+        "Any gap has a concrete rework instruction"
+      ],
+      "eval_type": "content"
+    }
+  ]
+}
