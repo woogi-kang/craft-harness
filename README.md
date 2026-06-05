@@ -1,19 +1,40 @@
 ![Craft Harness banner](docs/assets/craft-harness-banner.png)
 
+<p align="right">
+  <a href="README.md"><kbd>English</kbd></a>
+  <a href="README.ko.md"><kbd>한국어</kbd></a>
+</p>
+
 # Craft Harness
 
-Craft Harness is a multi-runtime agent harness for teams that use several coding
-agents at once. It packages reusable agents, skills, commands, worktree
-orchestration, output styles, and verification contracts for Claude, Codex,
-Gemini, OpenCode, and OpenHands-style workflows.
+**Portable agent packs, runtime adapters, and orchestration contracts for teams
+that use more than one AI coding agent.**
+
+Craft Harness is not another coding agent. It is the harness layer around your
+agents: reusable roles, skills, commands, output styles, install adapters,
+worktree orchestration, and validation contracts for Claude, Codex, Gemini,
+OpenCode, and OpenHands-style workflows.
 
 This repository is intentionally split from `claude-craft`. It starts as a clean
-open-source staging repo with only the Core and Dev packs.
+open-source staging repo with only the Core and Dev packs: no private workspace,
+no personal logs, no local settings, and no unreviewed domain packs.
 
 ## Why This Exists
 
-Most agent tools optimize for one runtime. Craft Harness focuses on the layer
-above them:
+AI coding has moved from one-off prompts to repeatable engineering workflows.
+The hard part is no longer just asking an agent to write code. The hard part is
+making agent work portable, reviewable, and consistent across different tools.
+
+Most teams quickly run into the same problems:
+
+- prompts and agent instructions drift between Claude, Codex, Gemini, and other
+  runtimes
+- good review or QA workflows stay trapped in one local setup
+- output quality depends too much on the agent's default tone
+- parallel work is hard to coordinate without clear handoff contracts
+- run artifacts, acceptance criteria, and verification notes are not standardized
+
+Craft Harness provides a public, inspectable layer for those workflows:
 
 - reusable agent and skill packs
 - runtime adapters for common agent guidance files
@@ -22,7 +43,32 @@ above them:
 - concise human output plus machine-readable sidecars
 - public validation and install checks
 
-## Current Packs
+## What Makes It Different
+
+| Layer | What Craft Harness Provides |
+| --- | --- |
+| Multi-runtime adapters | Installable guidance for Claude, Codex, Gemini, and OpenCode-style projects |
+| Agent and skill packs | Portable `agents/`, `skills/`, and `commands/` instead of one-off prompts |
+| Output styles | Reusable response formats such as `concise-engineer`, `research-brief`, `qa-report`, and `executive-summary` |
+| Worktree orchestration | Plan-driven worker DAGs with explicit dependencies and success criteria |
+| Verification contracts | Each worker can carry acceptance criteria, eval type, and QA handoff expectations |
+| Public safety boundary | Validation blocks private workspaces, logs, backups, local settings, and common secret patterns |
+
+## Who Should Use This
+
+Craft Harness is a good fit if you:
+
+- maintain a codebase where multiple AI coding agents are used side by side
+- want reusable agent roles instead of rebuilding prompts for every project
+- need QA, review, and acceptance criteria to be part of the workflow
+- run parallel agent work in git worktrees and want cleaner coordination
+- are building your own agent pack, coding harness, or internal AI work system
+- want an open-source baseline you can fork, audit, and extend
+
+It is probably not the right fit if you only need a single prompt, a hosted agent
+UI, or a fully managed cloud automation platform.
+
+## Current Scope
 
 | Pack | Contents |
 | --- | --- |
@@ -53,18 +99,122 @@ You can also run the local wrapper without installing:
 ./craft catalog --format json
 ```
 
-## Runtime Adapters
+## Tutorial: First 5 Minutes
+
+### 1. Check the Harness
+
+Run a local health check after cloning:
 
 ```bash
-craft install --target claude --mode copy
-craft install --target codex --dest /path/to/project
-craft install --target gemini --dest /path/to/project
-craft install --target opencode --dest /path/to/project
+craft doctor
 ```
 
-Claude installation copies `agents/`, `skills/`, and `commands/` into
-`~/.claude`. Codex, Gemini, and OpenCode targets install adapter guidance files
-into the destination project.
+This verifies the expected repo shape, Python version, git availability, and
+public agent, skill, command, and template directories.
+
+### 2. Inspect the Skill Catalog
+
+Generate a Markdown catalog for humans:
+
+```bash
+craft catalog --format md --output docs/skill-catalog.md
+```
+
+Generate JSON when another tool should consume the catalog:
+
+```bash
+craft catalog --format json > /tmp/craft-catalog.json
+```
+
+The catalog is built from `skills/**/SKILL.md` frontmatter, so pack authors can
+add skills without updating a hand-written registry.
+
+### 3. Install an Adapter Into a Project
+
+Install Codex guidance into a sandbox project:
+
+```bash
+mkdir -p /tmp/craft-demo-app
+craft install --target codex --dest /tmp/craft-demo-app
+```
+
+Install Gemini or OpenCode-style guidance the same way:
+
+```bash
+craft install --target gemini --dest /tmp/craft-demo-app
+craft install --target opencode --dest /tmp/craft-demo-app
+```
+
+Install Claude assets into an explicit sandbox location:
+
+```bash
+craft install --target claude --dest /tmp/craft-claude-sandbox
+```
+
+Claude installation copies `agents/`, `skills/`, and `commands/`. Codex,
+Gemini, and OpenCode targets install adapter guidance files into the destination
+project.
+
+### 4. Dry-run an Orchestration Plan
+
+Preview a two-worker plan without starting any agent:
+
+```bash
+craft orchestrate examples/plan.json --dry-run
+```
+
+The example plan creates a Backend worker first, then a QA worker that depends
+on Backend output. Dry-run mode shows the tmux session name, worker order,
+worktree paths, and coordination directory before anything executes.
+
+## Example Plan
+
+```bash
+cat > plan.json <<'JSON'
+{
+  "session": "checkout-hardening",
+  "base_ref": "HEAD",
+  "workers": [
+    {
+      "name": "Implementation",
+      "task": "Implement checkout validation for missing shipping address.",
+      "success_criteria": [
+        "The API rejects missing shipping addresses with a 422 response",
+        "The UI shows a clear field-level error"
+      ],
+      "eval_type": "feature"
+    },
+    {
+      "name": "QA",
+      "task": "Review the implementation against every success criterion.",
+      "depends_on": ["Implementation"],
+      "success_criteria": [
+        "Every criterion has a PASS or FAIL decision",
+        "Any failure includes a concrete rework instruction"
+      ],
+      "eval_type": "qa"
+    }
+  ]
+}
+JSON
+
+craft orchestrate plan.json --dry-run
+```
+
+For the full plan contract, see [Spec and Contract Notes](docs/spec-contract.md).
+
+## Common Workflows
+
+| Goal | Command |
+| --- | --- |
+| Check local setup | `craft doctor` |
+| Validate public repo contents | `craft validate` |
+| Generate human skill catalog | `craft catalog --format md --output docs/skill-catalog.md` |
+| Generate machine-readable catalog | `craft catalog --format json` |
+| Install runtime adapter | `craft install --target codex --dest /path/to/project` |
+| Preview an orchestration plan | `craft orchestrate examples/plan.json --dry-run` |
+| Execute a plan | `craft orchestrate examples/plan.json --execute` |
+| Watch dependency handoffs | `craft orchestrate examples/plan.json --watch` |
 
 ## Orchestration
 
@@ -86,6 +236,9 @@ The public plan format supports:
 - `workers[].success_criteria`
 - `workers[].eval_type`
 
+See [Architecture](docs/architecture.md) for the repo layers and execution
+model.
+
 ## Output Styles
 
 Output styles live in `output-styles/` and define concise, predictable final
@@ -99,6 +252,23 @@ responses for common work modes:
 The principle is human-readable Markdown first, machine-readable run artifacts
 second.
 
+See [Output Styles](docs/output-styles.md) for the current style pack.
+
+## Project Layout
+
+```text
+agents/          Role definitions for development, design QA, and review
+skills/          Portable task workflows with SKILL.md frontmatter
+commands/        Reusable command guidance
+templates/       Team orchestration templates
+adapters/        Runtime guidance files for Claude, Codex, Gemini, OpenCode
+output-styles/   Final response format presets
+examples/        Example orchestration plans
+schemas/         Public JSON schemas
+scripts/         Validation, install, and orchestration helpers
+docs/            Architecture, contracts, catalog, and launch notes
+```
+
 ## Validation
 
 ```bash
@@ -108,6 +278,35 @@ craft validate
 
 Validation checks skill frontmatter, public file exclusions, and high-confidence
 secret patterns. CI also checks catalog generation and local Markdown links.
+
+## Roadmap
+
+Near-term open-source work focuses on:
+
+- pack metadata and compatibility tags
+- stronger plan schema validation
+- replayable run logs and trajectory summaries
+- richer OpenCode and OpenHands exports
+- MCP and LSP extension points
+- optional domain packs after license, secret, and quality review
+
+See [ROADMAP.md](ROADMAP.md) for the public roadmap.
+
+## Contributing
+
+Contributions are welcome for bug fixes, docs, adapters, validation checks,
+output styles, and carefully scoped Core or Dev pack improvements.
+
+Before opening a pull request:
+
+```bash
+craft validate
+python3 scripts/check-markdown-links.py .
+python3 scripts/validate-plan.py examples/plan.json
+```
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and
+[SUPPORT.md](SUPPORT.md) before proposing larger changes.
 
 ## License
 
