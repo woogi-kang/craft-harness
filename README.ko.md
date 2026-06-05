@@ -98,14 +98,12 @@ craft doctor
 ### Homebrew
 
 ```bash
-brew tap woogi-kang/craft-harness https://github.com/woogi-kang/craft-harness.git
-brew install craft-harness
+brew install woogi-kang/tap/craft-harness
 craft doctor
 ```
 
-초기 오픈소스 bootstrap 단계에서는 레포 안의 Homebrew formula가 `main`을
-따라갑니다. 첫 public release 이후에는 별도 tap과 tag 기반 formula로 옮기는 것을
-계획하고 있습니다.
+이 명령은 [`woogi-kang/homebrew-tap`](https://github.com/woogi-kang/homebrew-tap)의
+versioned formula를 사용합니다.
 
 ### Source Checkout
 

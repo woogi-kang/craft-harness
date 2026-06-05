@@ -97,14 +97,12 @@ The installer places the harness in `~/.local/share/craft-harness` and links
 ### Homebrew
 
 ```bash
-brew tap woogi-kang/craft-harness https://github.com/woogi-kang/craft-harness.git
-brew install craft-harness
+brew install woogi-kang/tap/craft-harness
 craft doctor
 ```
 
-The in-repo Homebrew formula tracks `main` for the initial open-source
-bootstrap. A dedicated tap and tagged release formula are planned after the
-first public release.
+This installs the versioned formula from
+[`woogi-kang/homebrew-tap`](https://github.com/woogi-kang/homebrew-tap).
 
 ### Source Checkout
 

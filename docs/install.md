@@ -36,16 +36,13 @@ project.
 
 ## Homebrew
 
-This repository includes a Homebrew formula at `Formula/craft-harness.rb`.
-
 ```bash
-brew tap woogi-kang/craft-harness https://github.com/woogi-kang/craft-harness.git
-brew install craft-harness
+brew install woogi-kang/tap/craft-harness
 ```
 
-The in-repo formula tracks `main` for the initial open-source bootstrap. After
-the first tagged release, the formula should move to a dedicated tap and point
-to a versioned source archive or tag.
+The Homebrew formula lives in the dedicated
+[`woogi-kang/homebrew-tap`](https://github.com/woogi-kang/homebrew-tap)
+repository and points to a tagged Craft Harness release.
 
 ## Source Checkout
 
@@ -78,5 +75,5 @@ For Homebrew:
 
 ```bash
 brew uninstall craft-harness
-brew untap woogi-kang/craft-harness
+brew untap woogi-kang/tap
 ```
