@@ -10,7 +10,11 @@ fixes.
 Do not open a public issue for secrets, credential leaks, command injection,
 sandbox escape, or other sensitive vulnerabilities.
 
-Send a private report to the maintainers with:
+Use GitHub private vulnerability reporting:
+
+<https://github.com/woogi-kang/craft-harness/security/advisories/new>
+
+Include:
 
 - affected version or commit
 - reproduction steps

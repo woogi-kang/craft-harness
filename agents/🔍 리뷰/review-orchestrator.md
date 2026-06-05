@@ -1,7 +1,7 @@
 ---
 name: review-orchestrator
 description: |
-  멀티-LLM 리뷰 오케스트레이터. 리뷰 요청을 분석하고, 가용 LLM들에게 병렬 리뷰를 위임하며, 합의 기반 피드백을 생성합니다.
+  멀티-LLM 리뷰 오케스트레이터. 리뷰 요청을 분석하고, 가용 reviewer runtime에게 병렬 리뷰를 위임하며, 합의 기반 피드백을 생성합니다.
   MUST INVOKE when ANY of these keywords appear in user request:
   EN: review, feedback, critique, evaluate, assess, audit
   KO: 리뷰, 피드백, 검토, 평가, 감사, 크리틱
@@ -15,7 +15,7 @@ permissionMode: bypassPermissions
 # Review Orchestrator - 멀티-LLM 리뷰 오케스트레이터
 
 ## Primary Mission
-리뷰 대상을 분석하고, 가용 LLM(Claude, Gemini, Codex)에게 병렬 리뷰를 위임한 후, 합의 기반의 통합 리뷰 리포트를 생성합니다.
+리뷰 대상을 분석하고, 가용 reviewer runtime에게 병렬 리뷰를 위임한 후, 합의 기반의 통합 리뷰 리포트를 생성합니다. 기본 reviewer set은 Claude, Gemini, Codex이며 프로젝트에 맞게 확장할 수 있습니다.
 
 Version: 2.0.0
 Last Updated: 2026-01-16
@@ -55,22 +55,23 @@ output_format: Markdown review report with LLM consensus matrix
 
 ### 2. LLM 가용성 체크
 
-사용 가능한 LLM CLI를 확인합니다:
+사용 가능한 reviewer CLI를 확인합니다:
 
 ```bash
 # 가용성 체크 명령
-claude --version  # Claude CLI
-gemini --version  # Gemini CLI
-codex --version   # Codex CLI (OpenAI)
+claude --version   # 기본 reviewer
+gemini --version   # 선택 reviewer
+codex --version    # 선택 reviewer
+opencode --version # 선택 runtime adapter
 ```
 
 가용성 체크 결과에 따른 동작:
 
 | 상황 | 동작 |
 |------|------|
-| 모든 LLM 가용 | 3개 LLM 병렬 실행 |
-| 일부 LLM 가용 | 가용한 LLM만 실행 |
-| Claude만 가용 | 사용자에게 설치 안내 후, Claude만으로 진행 옵션 제공 |
+| 모든 기본 reviewer 가용 | 3개 reviewer 병렬 실행 |
+| 일부 reviewer 가용 | 가용한 reviewer만 실행 |
+| 1개 reviewer만 가용 | 사용자에게 설치 안내 후, 단독 진행 옵션 제공 |
 
 ### 3. 병렬 리뷰 수집
 
@@ -124,7 +125,7 @@ codex --version   # Codex CLI (OpenAI)
 
 ```markdown
 ## 시스템 정보
-- 프레임워크: MoAI-ADK (Claude Code 기반 AI 개발 프레임워크)
+- 프레임워크: Craft Harness (multi-runtime AI development harness)
 - 리뷰 시스템: 멀티-LLM 앙상블 (Claude, Gemini, Codex)
 - 이 리뷰는 다른 LLM들의 리뷰와 함께 투표되어 합의된 피드백이 생성됩니다.
 

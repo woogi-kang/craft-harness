@@ -83,15 +83,15 @@ Read `references/anti-slop.md` for implementation or review. The short version:
 When UI code exists locally, run the detector on changed UI files or the focused source directory:
 
 ```bash
-node .claude/skills/design-harness/scripts/detect-design-slop.mjs src app components pages
+node skills/design-harness/scripts/detect-design-slop.mjs src app components pages
 ```
 
 Use the findings as prompts for inspection, not as a substitute for judgment. After implementation, verify in a browser when the project has a runnable frontend.
 
 ## Legacy Policy
 
-- `ui-ux-pro-max` and `design-craft` have been archived outside the active skill tree at `.claude/archive/skills/design/legacy-entrypoints-260529`.
-- `🎨 디자인/ui-design-agent-skills/*` has been archived outside the active skill tree at `.claude/archive/skills/design/ui-design-agent-skills-legacy-260529`. Do not use those old template snippets as primary guidance.
+- `ui-ux-pro-max` and `design-craft` are legacy entrypoints outside the public active skill tree.
+- `🎨 디자인/ui-design-agent-skills/*` is a legacy template split outside the public active skill tree. Do not use those old template snippets as primary guidance.
 
 ## Review Output
 

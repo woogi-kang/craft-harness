@@ -23,6 +23,8 @@ jobs:
         run: craft catalog --format json --output /tmp/craft-catalog.json
       - name: Catalog Markdown
         run: craft catalog --format md --output docs/skill-catalog.md
+      - name: Catalog drift check
+        run: git diff --exit-code docs/skill-catalog.md
       - name: Orchestrator dry run
         run: craft orchestrate examples/plan.json --dry-run
       - name: Local installer
@@ -38,3 +40,11 @@ jobs:
         run: python scripts/validate-plan.py examples/plan.json
       - name: Markdown links
         run: python scripts/check-markdown-links.py .
+      - name: Python compile
+        run: python -m compileall -q src scripts
+      - name: Public boundary check
+        run: |
+          if git ls-files | grep -E '(^workspace/|^work-social/|^\.codex/|^\.claude/(logs|memory|sessions|checkpoints|plans)/|\.env|secret|backup)'; then
+            echo "Forbidden public-boundary file found"
+            exit 1
+          fi

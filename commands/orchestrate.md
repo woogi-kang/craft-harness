@@ -1,5 +1,5 @@
 ---
-description: "병렬 워크트리 오케스트레이션 — 여러 Claude 인스턴스를 동시에 실행"
+description: "병렬 워크트리 오케스트레이션 — 여러 agent runtime session을 동시에 실행"
 argument-hint: "[workers or --status/--cleanup session]"
 type: utility
 allowed-tools: Bash, Read, Write, Glob, Grep, AskUserQuestion
@@ -19,7 +19,7 @@ model: opus
 ## Core Principle
 
 사용자가 병렬로 처리할 작업들을 설명하면, 독립적인 git worktree와 tmux pane으로
-여러 Claude 인스턴스를 동시에 실행합니다.
+여러 agent runtime session을 동시에 실행합니다.
 
 ## Command Flow
 
@@ -94,7 +94,7 @@ python3 scripts/orchestrate-worktrees.py plan.json
 AskUserQuestion으로 확인:
 - Question: "이 계획으로 실행할까요?"
 - Options:
-  - "실행" — 워크트리 생성 및 Claude 인스턴스 시작
+  - "실행" — 워크트리 생성 및 agent runtime session 시작
   - "수정" — plan.json 수정 후 재확인
   - "취소" — 중단
 

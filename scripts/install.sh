@@ -8,6 +8,8 @@ INSTALL_DIR="${CRAFT_HARNESS_HOME:-$PREFIX/share/craft-harness}"
 BIN_DIR="${CRAFT_HARNESS_BIN_DIR:-$PREFIX/bin}"
 RUN_DOCTOR=1
 LOCAL_SOURCE=""
+FORCE=0
+MARKER_FILE=".craft-harness-install"
 
 usage() {
   cat <<'EOF'
@@ -25,6 +27,7 @@ Options:
   --ref REF          Git branch or tag to install (default: main)
   --local DIR        Install from a local checkout instead of downloading
   --no-doctor        Skip the post-install doctor check
+  --force            Replace an existing non-marked install directory
   -h, --help         Show this help
 
 Environment:
@@ -95,6 +98,10 @@ while [[ $# -gt 0 ]]; do
       RUN_DOCTOR=0
       shift
       ;;
+    --force)
+      FORCE=1
+      shift
+      ;;
     -h|--help)
       usage
       exit 0
@@ -108,6 +115,20 @@ done
 PREFIX="${PREFIX/#\~/$HOME}"
 INSTALL_DIR="${INSTALL_DIR/#\~/$HOME}"
 BIN_DIR="${BIN_DIR/#\~/$HOME}"
+PREFIX="$(mkdir -p "$PREFIX" && cd "$PREFIX" && pwd)"
+INSTALL_DIR="$(mkdir -p "$(dirname "$INSTALL_DIR")" && cd "$(dirname "$INSTALL_DIR")" && pwd)/$(basename "$INSTALL_DIR")"
+BIN_DIR="$(mkdir -p "$BIN_DIR" && cd "$BIN_DIR" && pwd)"
+
+assert_safe_install_dir() {
+  local target="$1"
+  [[ -n "$target" ]] || fail "install directory is empty"
+  [[ "$target" != "/" ]] || fail "refusing to install into /"
+  [[ "$target" != "$HOME" ]] || fail "refusing to replace HOME"
+  [[ "$target" != "$PREFIX" ]] || fail "refusing to replace prefix root"
+  [[ "$target" != "$BIN_DIR" ]] || fail "refusing to replace bin dir"
+  [[ "$target" != "/usr" && "$target" != "/usr/local" && "$target" != "/opt" ]] || \
+    fail "refusing to replace system directory: $target"
+}
 
 if [[ -z "$LOCAL_SOURCE" ]]; then
   LOCAL_SOURCE="$(default_local_source || true)"
@@ -148,6 +169,11 @@ install_source() {
   local staging="$TMP_DIR/install"
   mkdir -p "$staging"
 
+  assert_safe_install_dir "$INSTALL_DIR"
+  if [[ -e "$INSTALL_DIR" && ! -f "$INSTALL_DIR/$MARKER_FILE" && "$FORCE" -ne 1 ]]; then
+    fail "$INSTALL_DIR already exists and is not marked as a Craft Harness install. Rerun with --force to replace it."
+  fi
+
   log "Copying harness assets to $INSTALL_DIR"
   tar \
     --exclude '.git' \
@@ -159,6 +185,7 @@ install_source() {
   rm -rf "$INSTALL_DIR"
   mkdir -p "$(dirname "$INSTALL_DIR")"
   mv "$staging" "$INSTALL_DIR"
+  printf 'installed_at=%s\nref=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$REF" > "$INSTALL_DIR/$MARKER_FILE"
 
   mkdir -p "$BIN_DIR"
   ln -sfn "$INSTALL_DIR/craft" "$BIN_DIR/craft"

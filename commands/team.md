@@ -9,7 +9,7 @@ model: opus
 
 !git branch --show-current
 !tmux ls 2>/dev/null || echo "No tmux sessions"
-!ls .claude/templates/*.toml 2>/dev/null || echo "No templates"
+!ls templates/*.toml 2>/dev/null || echo "No templates"
 
 ---
 
@@ -53,8 +53,8 @@ python3 scripts/orchestrate-worktrees.py .orchestration/{session}/plan.json --cl
 
 ### 3a. 도메인 에이전트 매칭
 
-`.claude/rules/common/agent-orchestration.md`의 라우팅 매트릭스를 참조하여
-각 워커에 적절한 도메인 에이전트의 전문성을 주입:
+top-level `agents/`와 `skills/` 카탈로그를 참조하여 각 워커에 적절한 도메인
+에이전트의 전문성을 주입:
 
 | 작업 유형 | 참조 에이전트 | 태스크에 포함할 지식 |
 |-----------|--------------|---------------------|
@@ -162,7 +162,7 @@ Run `--watch` in another terminal to auto-spawn blocked workers when dependencie
    - STOP
 
 3. IF team mode:
-   - Read `.claude/rules/common/agent-orchestration.md` for agent routing matrix
+   - Read `agents/`, `skills/`, and `docs/skill-catalog.md` for routing context
    - Analyze user's task description
    - Identify domain agents and their expertise
    - Decompose into workers with:

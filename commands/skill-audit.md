@@ -11,7 +11,7 @@ $ARGUMENTS
 ## 절차
 
 ### 1. 인벤토리
-- `.claude/skills/` 전체 스캔
+- `skills/` 전체 스캔
 - 각 스킬의 SKILL.md 읽기
 - frontmatter 메타데이터 추출 (name, description, version, category)
 
@@ -21,7 +21,7 @@ $ARGUMENTS
 - **중복**: 다른 스킬과 기능이 겹치는지
 - **참조 무결성**: references/ 파일이 실제로 존재하는지
 - **최신성**: 기술 스택 버전이 현재와 맞는지
-- **사용 빈도**: `.claude/logs/usage.jsonl` 에서 호출 기록 확인
+- **사용 빈도**: 공개 run ledger나 수동 사용 기록이 있으면 참고
 
 ### 3. 판정
 각 스킬에 대해 하나를 선택:

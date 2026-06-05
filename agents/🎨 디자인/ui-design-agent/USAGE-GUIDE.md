@@ -59,7 +59,7 @@
 UI 코드가 있는 프로젝트에서는 변경한 UI 디렉터리를 대상으로 실행합니다.
 
 ```bash
-node .claude/skills/design-harness/scripts/detect-design-slop.mjs src app components pages
+node skills/design-harness/scripts/detect-design-slop.mjs src app components pages
 ```
 
 프론트엔드 앱을 실제로 실행할 수 있으면 브라우저에서 desktop/mobile viewport를 확인합니다.

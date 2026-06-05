@@ -1,5 +1,5 @@
 ---
-description: "멀티-LLM 리뷰 - Claude, Gemini, Codex가 함께 리뷰하고 합의된 피드백 생성"
+description: "멀티-LLM 리뷰 - 사용 가능한 reviewer runtime으로 합의된 피드백 생성"
 argument-hint: "<file_path>"
 type: utility
 allowed-tools: AskUserQuestion, Bash, Read, Write, Glob, Grep, Task
@@ -10,7 +10,7 @@ model: opus
 
 ## Purpose
 
-여러 LLM(Claude, Gemini, Codex)이 콘텐츠를 병렬로 리뷰하고, 합의 기반의 통합 피드백 리포트를 생성합니다.
+여러 reviewer runtime이 콘텐츠를 병렬로 리뷰하고, 합의 기반의 통합 피드백 리포트를 생성합니다. 기본 reviewer set은 Claude, Gemini, Codex이며 프로젝트에 맞게 확장할 수 있습니다.
 
 Version: 2.0.0
 
@@ -42,18 +42,19 @@ Version: 2.0.0
 ## Phase 0: LLM 가용성 체크
 
 ```bash
-claude --version  # 필수
-gemini --version  # 선택
-codex --version   # 선택
+claude --version   # 기본 reviewer
+gemini --version   # 선택 reviewer
+codex --version    # 선택 reviewer
+opencode --version # 선택 runtime adapter
 ```
 
 ### 가용성에 따른 동작
 
 | 상황 | 동작 |
 |------|------|
-| 모든 LLM 가용 | 3개 LLM 병렬 리뷰 → 합의 도출 |
-| 일부 LLM 가용 | 가용한 LLM만 리뷰 → 가능한 합의 도출 |
-| Claude만 가용 | 사용자에게 선택지 제공 (설치 or 단독 진행) |
+| 모든 기본 reviewer 가용 | 3개 reviewer 병렬 리뷰 → 합의 도출 |
+| 일부 reviewer 가용 | 가용한 reviewer만 리뷰 → 가능한 합의 도출 |
+| 1개 reviewer만 가용 | 사용자에게 선택지 제공 (설치 or 단독 진행) |
 
 ---
 
@@ -71,7 +72,7 @@ codex --version   # 선택
 
 ```markdown
 ## 시스템 정보
-- 프레임워크: MoAI-ADK
+- 프레임워크: Craft Harness
 - 리뷰 시스템: 멀티-LLM 앙상블
 
 ## 당신의 역할

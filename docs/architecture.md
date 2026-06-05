@@ -15,7 +15,8 @@ Craft Harness is organized around portable assets and a small CLI.
 
 - CLI: `craft doctor`, `catalog`, `validate`, `install`, `orchestrate`.
 - Orchestrator: git worktrees plus tmux windows.
-- Contracts: success criteria and eval type in `plan.json`.
+- Contracts: success criteria, eval type, allowed paths, and expected artifacts in `plan.json`.
+- Run artifacts: `.orchestration/{session}/events.jsonl`, worker `task.md`, `status.md`, and `handoff.md`.
 - QA: live QA agent guidance and eval presets.
 
 ## Orchestration Lifecycle
@@ -25,7 +26,8 @@ flowchart TD
   Plan["plan.json"] --> Load["load and validate plan"]
   Load --> DAG["check dependency DAG"]
   DAG --> Coord["write task.md, handoff.md, status.md"]
-  Coord --> Worktrees["create isolated git worktrees"]
+  Coord --> Ledger["append events.jsonl"]
+  Ledger --> Worktrees["create isolated git worktrees"]
   Worktrees --> Tmux["start ready workers in tmux"]
   Tmux --> Status["track status.md"]
   Status --> Watch["watch dependency completion"]

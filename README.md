@@ -15,9 +15,9 @@ agents: reusable roles, skills, commands, output styles, install adapters,
 worktree orchestration, and validation contracts for Claude, Codex, Gemini,
 OpenCode, and OpenHands-style workflows.
 
-This repository is intentionally split from `claude-craft`. It starts as a clean
-open-source staging repo with only the Core and Dev packs: no private workspace,
-no personal logs, no local settings, and no unreviewed domain packs.
+This repository is intentionally split from a private predecessor. It starts as a
+clean open-source staging repo with only the Core and Dev packs: no private
+workspace, no personal logs, no local settings, and no unreviewed domain packs.
 
 ## Why This Exists
 
@@ -126,7 +126,30 @@ UI, or a fully managed cloud automation platform.
 Optional Korea, legal, finance, marketing, planning, and content packs are not
 included in this initial public scope.
 
+## Runtime Support
+
+| Runtime | Install command | What is installed | Support level |
+| --- | --- | --- | --- |
+| Claude | `craft install --target claude --dest ~/.claude` | `agents/`, `skills/`, `commands/` | asset install |
+| Codex | `craft install --target codex --dest PROJECT` | `AGENTS.md` | guidance adapter |
+| Gemini | `craft install --target gemini --dest PROJECT` | `GEMINI.md` | guidance adapter |
+| OpenCode | `craft install --target opencode --dest PROJECT` | `AGENTS.md` | guidance adapter |
+| OpenHands | `craft install --target openhands --dest PROJECT` | `AGENTS.md`, `.agents/skills/` | skill registry export |
+
+Install commands refuse to replace existing files by default. Use `--dry-run` to
+preview changes and `--force` only when you intentionally want to replace an
+existing adapter or skill directory.
+
 ## Installation
+
+Prerequisites:
+
+| Tool | Required for |
+| --- | --- |
+| Python 3.11+ | `craft` CLI |
+| git | validation and worktree orchestration |
+| tmux | `craft orchestrate --execute`, `--watch`, and `--status` |
+| Claude/Codex/Gemini/OpenCode/OpenHands | only when using that runtime adapter |
 
 ### curl
 
@@ -188,12 +211,13 @@ From a git-backed project, preview the bundled orchestration example:
 craft orchestrate examples/plan.json --dry-run
 ```
 
-Then install guidance into a project:
+Then choose one runtime adapter to install into a project:
 
 ```bash
 craft install --target codex --dest /path/to/project
 craft install --target gemini --dest /path/to/project
 craft install --target opencode --dest /path/to/project
+craft install --target openhands --dest /path/to/project
 ```
 
 ## Tutorial: First 5 Minutes
@@ -231,15 +255,16 @@ add skills without updating a hand-written registry.
 Install Codex guidance into a sandbox project:
 
 ```bash
-mkdir -p /tmp/craft-demo-app
-craft install --target codex --dest /tmp/craft-demo-app
+mkdir -p /tmp/craft-demo-codex
+craft install --target codex --dest /tmp/craft-demo-codex
 ```
 
-Install Gemini or OpenCode-style guidance the same way:
+Install Gemini, OpenCode, or OpenHands-style guidance the same way:
 
 ```bash
-craft install --target gemini --dest /tmp/craft-demo-app
-craft install --target opencode --dest /tmp/craft-demo-app
+craft install --target gemini --dest /tmp/craft-demo-gemini
+craft install --target opencode --dest /tmp/craft-demo-opencode
+craft install --target openhands --dest /tmp/craft-demo-openhands --dry-run
 ```
 
 Install Claude assets into an explicit sandbox location:
@@ -250,7 +275,16 @@ craft install --target claude --dest /tmp/craft-claude-sandbox
 
 Claude installation copies `agents/`, `skills/`, and `commands/`. Codex,
 Gemini, and OpenCode targets install adapter guidance files into the destination
-project.
+project. OpenHands installs adapter guidance plus `.agents/skills/`.
+
+Target project output:
+
+```text
+PROJECT/
+├── AGENTS.md              # Codex, OpenCode, or OpenHands guidance
+├── GEMINI.md              # Gemini guidance when selected
+└── .agents/skills/        # OpenHands skill registry export
+```
 
 ### 4. Dry-run an Orchestration Plan
 
@@ -279,7 +313,7 @@ cat > plan.json <<'JSON'
         "The API rejects missing shipping addresses with a 422 response",
         "The UI shows a clear field-level error"
       ],
-      "eval_type": "feature"
+      "eval_type": "fullstack"
     },
     {
       "name": "QA",
@@ -289,7 +323,7 @@ cat > plan.json <<'JSON'
         "Every criterion has a PASS or FAIL decision",
         "Any failure includes a concrete rework instruction"
       ],
-      "eval_type": "qa"
+      "eval_type": "review"
     }
   ]
 }
@@ -327,11 +361,15 @@ The public plan format supports:
 
 - `session`
 - `base_ref`
+- `launcher`
 - `workers[].name`
 - `workers[].task`
 - `workers[].depends_on`
+- `workers[].blocked_by`
 - `workers[].success_criteria`
 - `workers[].eval_type`
+- `workers[].allowed_paths`
+- `workers[].artifacts`
 
 See [Architecture](docs/architecture.md) for the repo layers and execution
 model.
@@ -349,6 +387,11 @@ responses for common work modes:
 The principle is human-readable Markdown first, machine-readable run artifacts
 second.
 
+For Claude installs, the default adapter points at
+`output-styles/concise-engineer.md`. Other runtimes can copy the relevant
+`output-styles/*.md` content into their project guidance until native output
+style installers are added.
+
 See [Output Styles](docs/output-styles.md) for the current style pack.
 
 ## Project Layout
@@ -358,7 +401,7 @@ agents/          Role definitions for development, design QA, and review
 skills/          Portable task workflows with SKILL.md frontmatter
 commands/        Reusable command guidance
 templates/       Team orchestration templates
-adapters/        Runtime guidance files for Claude, Codex, Gemini, OpenCode
+adapters/        Runtime guidance files for Claude, Codex, Gemini, OpenCode, OpenHands
 output-styles/   Final response format presets
 examples/        Example orchestration plans
 schemas/         Public JSON schemas

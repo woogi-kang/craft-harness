@@ -51,9 +51,9 @@ claude  # 세션 시작
 python scripts/orchestrate-worktrees.py plan.json --execute
 ```
 - git worktree로 격리된 작업 디렉토리
-- tmux로 병렬 Claude 인스턴스
+- tmux로 병렬 agent runtime session
 - 파일 기반 조율 (task.md → handoff.md)
-- **우리 claude-craft의 기본 병렬 패턴**
+- **Craft Harness의 기본 병렬 패턴**
 
 ### 4. Continuous PR Loop
 ```
@@ -116,7 +116,7 @@ bash scripts/sprint-reset-loop.sh --session {name} --input {initial_input}
 bash scripts/sprint-reset-loop.sh --session {name} --status
 bash scripts/sprint-reset-loop.sh --session {name} --resume
 ```
-- 각 스프린트가 독립 Claude 인스턴스에서 실행 (컨텍스트 완전 리셋)
+- 각 스프린트가 독립 agent runtime session에서 실행 (컨텍스트 완전 리셋)
 - 이전 결과를 구조화된 파일로 전달 (핸드오프)
 - 컨텍스트 불안감 제거 — 항상 깨끗한 컨텍스트에서 시작
 - 순차 의존성 작업에 적합 (기획, 마이그레이션, 긴 리팩토링)
@@ -130,7 +130,7 @@ Generator 구현 → Evaluator 라이브 테스트 → 피드백 → 재구현 (
 - Anthropic 하네스 패턴에서 영감
 - Generator와 Evaluator가 독립 에이전트 (자체 평가 편향 제거)
 - Evaluator는 Playwright로 라이브 상호작용 + 스크린샷
-- 도메인별 평가 루브릭 적용 (`.claude/evals/presets/`)
+- 도메인별 평가 루브릭 적용 (`.orchestration/evals/presets/`)
 - fullstack-dev.toml, figma-to-prod.toml에 QA 워커로 통합
 
 ## 안전 장치

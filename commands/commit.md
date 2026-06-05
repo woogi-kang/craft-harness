@@ -108,14 +108,15 @@ For each logical group:
 Commit message format (HEREDOC):
 ```bash
 git commit -m "$(cat <<'EOF'
-<type>(<scope>): <description>
+	<type>(<scope>): <description>
 
-<body if needed>
-
-Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
-EOF
-)"
+	<body if needed>
+	EOF
+	)"
 ```
+
+Only add `Co-authored-by` trailers when they accurately describe the actual
+human or tool pairing context for the commit.
 
 ## Output Format
 
@@ -181,7 +182,8 @@ EOF
 6. For each logical group:
    - Stage files: `git add <files>`
    - Create commit with detected style
-   - Use HEREDOC format with Co-Authored-By
+   - Use HEREDOC format
+   - Add coauthor trailers only when attribution is accurate
 
 7. After all commits, show summary:
    - List of commits with hash and message

@@ -24,7 +24,7 @@ metadata:
 ## Eval 구조
 
 ```
-.claude/evals/
+.orchestration/evals/
 ├── {eval-name}/
 │   ├── eval.md           # Eval 정의 (기준, 입력, 기대 출력)
 │   ├── grader.sh         # 자동 채점 스크립트
@@ -94,14 +94,14 @@ pass@k = 1 - C(n-c, k) / C(n, k)
 
 ```bash
 # Eval 생성
-mkdir -p .claude/evals/auth-login
+mkdir -p .orchestration/evals/auth-login
 # eval.md, grader.sh, cases/ 작성
 
 # Eval 실행 (수동)
-bash .claude/evals/auth-login/grader.sh input.json output.json
+bash .orchestration/evals/auth-login/grader.sh input.json output.json
 
 # 결과 기록
-echo '{"timestamp":"...","pass":true,"notes":"..."}' >> .claude/evals/auth-login/results/latest.json
+echo '{"timestamp":"...","pass":true,"notes":"..."}' >> .orchestration/evals/auth-login/results/latest.json
 ```
 
 ## 도메인별 Eval 프리셋
@@ -110,9 +110,9 @@ echo '{"timestamp":"...","pass":true,"notes":"..."}' >> .claude/evals/auth-login
 
 | 프리셋 | 파일 | 용도 |
 |--------|------|------|
-| UI/Design | `.claude/evals/presets/ui-design.md` | 4축 평가 (Design Quality, Originality, Craft, Functionality) |
-| API Backend | `.claude/evals/presets/api-backend.md` | 4축 평가 (Correctness, Robustness, Security, Performance) |
-| Content | `.claude/evals/presets/content-quality.md` | 4축 평가 (Clarity, Completeness, Accuracy, Engagement) |
+| UI/Design | `.orchestration/evals/presets/ui-design.md` | 4축 평가 (Design Quality, Originality, Craft, Functionality) |
+| API Backend | `.orchestration/evals/presets/api-backend.md` | 4축 평가 (Correctness, Robustness, Security, Performance) |
+| Content | `.orchestration/evals/presets/content-quality.md` | 4축 평가 (Clarity, Completeness, Accuracy, Engagement) |
 
 프리셋은 `live-qa-agent`의 `eval_type` 파라미터와 연동됩니다.
 

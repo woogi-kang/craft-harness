@@ -20,7 +20,7 @@ tools: ["Read", "Bash", "Glob", "Grep"]
 - 동일 파일 10회 이상 수정 -> 무한 루프 의심
 
 ### 2. 비용 추적 (Cost Drift)
-- `.claude/logs/usage.jsonl` 모니터링
+- `.orchestration/{session}/events.jsonl` 또는 runtime별 usage log 모니터링
 - 세션당 에이전트 호출 횟수 추적
 - 비정상적 증가 패턴 감지
 

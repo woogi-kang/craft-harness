@@ -99,14 +99,14 @@ Phase 5: Preflight   → anti-slop, states, responsive, a11y, screenshots
 Always start from design-harness.
 
 Full page/screen/redesign:
-→ Load: .claude/skills/design-harness/references/registers.md
-→ Load: .claude/skills/design-harness/references/anti-slop.md
+→ Load: skills/design-harness/references/registers.md
+→ Load: skills/design-harness/references/anti-slop.md
 
 Motion/interactions:
-→ Load: .claude/skills/design-harness/references/motion-interaction.md
+→ Load: skills/design-harness/references/motion-interaction.md
 
 Korean UI:
-→ Load: .claude/skills/design-harness/references/korean-ui.md
+→ Load: skills/design-harness/references/korean-ui.md
 ```
 
 ---

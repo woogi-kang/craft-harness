@@ -16,7 +16,23 @@ Output styles make agent responses easier to scan and easier to automate.
 - `qa-report`: verification and bug reporting.
 - `executive-summary`: roadmap and planning.
 
-Future versions may support a project-level `harness.yml` field:
+## Current Use
+
+Claude adapter guidance defaults to `output-styles/concise-engineer.md`.
+For other runtimes, copy the body of the desired style into the target project's
+runtime guidance file:
+
+```bash
+sed -n '1,160p' output-styles/qa-report.md
+```
+
+Then paste the relevant response contract into `AGENTS.md`, `GEMINI.md`, or the
+runtime-specific instruction file.
+
+## Planned Native Config
+
+Future versions may support a project-level `harness.yml` field and
+`craft output-styles install`:
 
 ```yaml
 output_style: concise-engineer

@@ -9,7 +9,9 @@
         "Login endpoint request and response schemas are documented",
         "401 and 422 error cases are documented"
       ],
-      "eval_type": "api"
+      "eval_type": "api",
+      "allowed_paths": ["docs/api/"],
+      "artifacts": ["docs/api/auth-login.md"]
     },
     {
       "name": "QA",
@@ -19,7 +21,9 @@
         "Every Backend success criterion has a PASS or FAIL decision",
         "Any gap has a concrete rework instruction"
       ],
-      "eval_type": "content"
+      "eval_type": "review",
+      "allowed_paths": [".orchestration/example-auth-flow/"],
+      "artifacts": [".orchestration/example-auth-flow/qa/handoff.md"]
     }
   ]
 }

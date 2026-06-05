@@ -20,4 +20,4 @@ Verification Loop 스킬을 실행합니다.
 5. Phase 1-4 실패 시 중단하고 수정 안내
 6. 최종 판정 출력
 
-스킬 상세: `.claude/skills/verification-loop/SKILL.md` 참조
+스킬 상세: `skills/verification-loop/SKILL.md` 참조

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""orchestrate-worktrees.py — tmux worktree orchestration for parallel Claude Code instances.
+"""orchestrate-worktrees.py — tmux worktree orchestration for parallel agent runtimes.
 
-Creates git worktrees and tmux panes so multiple Claude instances can work on
-independent tasks simultaneously, with optional dependency ordering (DAG).
+Creates git worktrees and tmux panes so multiple agent runtime sessions can work
+on independent tasks simultaneously, with optional dependency ordering (DAG).
 
 Usage:
     python3 scripts/orchestrate-worktrees.py plan.json              # dry-run
@@ -96,26 +96,67 @@ def warn(msg: str) -> None:
 # Status file helpers
 # ---------------------------------------------------------------------------
 
-def read_worker_state(worker) -> str:
-    """Read worker state from status.md. Handles JSON and legacy text."""
-    if not worker.status_file.exists():
+def read_state_path(path: Path) -> str:
+    """Read a status file. Handles JSON and legacy text."""
+    if not path.exists():
         return "unknown"
-    text = worker.status_file.read_text(encoding="utf-8").strip()
+    text = path.read_text(encoding="utf-8").strip()
     if not text:
         return "unknown"
-    # Try JSON first (forward compat)
     try:
         data = json.loads(text)
         state = data.get("state", "unknown")
     except (json.JSONDecodeError, AttributeError):
-        # Legacy plain-text format
         state = text
     return state if state in KNOWN_STATES else "unknown"
+
+
+def read_worker_state(worker) -> str:
+    """Read root and worker-local state, preferring terminal worker-local states."""
+    states = [read_state_path(path) for path in worker_status_paths(worker)]
+    states = [state for state in states if state != "unknown"]
+    for terminal in ("failed", "completed"):
+        if terminal in states:
+            return terminal
+    return states[0] if states else "unknown"
 
 
 def write_state(path: Path, state: str) -> None:
     """Write status as plain text (backward compatible)."""
     path.write_text(f"{state}\n", encoding="utf-8")
+
+
+def worker_status_paths(worker) -> list[Path]:
+    """Return root and worker-local status files that should stay in sync."""
+    paths = [worker.status_file]
+    local_status = worker.worktree_path / ".orchestration" / worker.session / worker.slug / "status.md"
+    if local_status != worker.status_file:
+        paths.append(local_status)
+    return paths
+
+
+def write_worker_state(worker, state: str) -> None:
+    """Write worker state to root coordination and worktree-local copies when present."""
+    for path in worker_status_paths(worker):
+        if path.parent.exists():
+            write_state(path, state)
+    append_event(worker, "state", {"state": state})
+
+
+def append_event(worker, event: str, payload: dict | None = None) -> None:
+    """Append a small JSONL event for status/replay tooling."""
+    event_file = worker.coord_dir.parent / "events.jsonl"
+    event_file.parent.mkdir(parents=True, exist_ok=True)
+    record = {
+        "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "session": worker.session,
+        "worker": worker.name,
+        "event": event,
+    }
+    if payload:
+        record.update(payload)
+    with event_file.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n")
 
 
 # ---------------------------------------------------------------------------
@@ -188,7 +229,7 @@ def partition_workers(workers: list) -> tuple[list, list]:
         # Check if any dependency failed → propagate failure
         failed_deps = [d for d in w.depends_on if states.get(d) == "failed"]
         if failed_deps:
-            write_state(w.status_file, "failed")
+            write_worker_state(w, "failed")
             warn(f"Worker '{w.name}' marked failed: dependency {', '.join(failed_deps)} failed")
             continue
 
@@ -282,6 +323,8 @@ class WorkerInfo:
         self.depends_on: list[str] = worker.get("depends_on", [])
         self.success_criteria: list[str] = worker.get("success_criteria", [])
         self.eval_type: str = worker.get("eval_type", "")
+        self.allowed_paths: list[str] = worker.get("allowed_paths", [])
+        self.artifacts: list[str] = worker.get("artifacts", [])
 
     def launcher_cmd(self) -> str:
         """Expand template variables in the launcher string with shell escaping."""
@@ -316,7 +359,7 @@ TASK_TEMPLATE = textwrap.dedent("""\
     - Worker: {worker_name}
     - Branch: {branch}
     - Worktree: {worktree_path}
-    {dependency_section}{success_criteria_section}
+    {dependency_section}{scope_section}{success_criteria_section}{artifact_section}
     ## Objective
     {task_description}
 
@@ -328,6 +371,7 @@ TASK_TEMPLATE = textwrap.dedent("""\
     - Focus only on your assigned task
     - Do not modify files outside your scope
     - Write a summary of your work when done
+    - Update `status.md` to `completed` when finished, or `failed` with notes if blocked
 """)
 
 HANDOFF_TEMPLATE = textwrap.dedent("""\
@@ -364,6 +408,20 @@ def write_coordination_files(worker: WorkerInfo) -> None:
     else:
         success_criteria_section = ""
 
+    # Build scope section
+    if worker.allowed_paths:
+        path_lines = "\n".join(f"    - {path}" for path in worker.allowed_paths)
+        scope_section = f"\n    ## Allowed Paths\n{path_lines}\n"
+    else:
+        scope_section = ""
+
+    # Build artifact section
+    if worker.artifacts:
+        artifact_lines = "\n".join(f"    - {artifact}" for artifact in worker.artifacts)
+        artifact_section = f"\n    ## Expected Artifacts\n{artifact_lines}\n"
+    else:
+        artifact_section = ""
+
     worker.task_file.write_text(
         TASK_TEMPLATE.format(
             worker_name=worker.name,
@@ -373,7 +431,9 @@ def write_coordination_files(worker: WorkerInfo) -> None:
             task_description=worker.task,
             worker_slug=worker.slug,
             dependency_section=dependency_section,
+            scope_section=scope_section,
             success_criteria_section=success_criteria_section,
+            artifact_section=artifact_section,
         ),
         encoding="utf-8",
     )
@@ -385,7 +445,7 @@ def write_coordination_files(worker: WorkerInfo) -> None:
 
     # Initial state: 'waiting' if has deps, 'not_started' otherwise
     initial = "waiting" if worker.depends_on else "not_started"
-    write_state(worker.status_file, initial)
+    write_worker_state(worker, initial)
 
 
 # ---------------------------------------------------------------------------
@@ -419,6 +479,43 @@ def remove_worktree(worker: WorkerInfo) -> None:
         info(f"Deleted branch: {worker.branch}")
 
 
+def worker_has_dirty_changes(worker: WorkerInfo) -> bool:
+    if not worker.worktree_path.exists():
+        return False
+    result = run(
+        ["git", "-C", str(worker.worktree_path), "status", "--porcelain"],
+        check=False,
+    )
+    return bool(result.stdout.strip())
+
+
+def branch_has_unmerged_commits(worker: WorkerInfo) -> bool:
+    result = git("branch", "--list", worker.branch, check=False)
+    if worker.branch not in result.stdout:
+        return False
+    merged = git("merge-base", "--is-ancestor", worker.branch, "HEAD", check=False)
+    return merged.returncode != 0
+
+
+def assert_cleanup_safe(workers: list[WorkerInfo]) -> None:
+    dirty = [w for w in workers if worker_has_dirty_changes(w)]
+    unmerged = [w for w in workers if branch_has_unmerged_commits(w)]
+    if not dirty and not unmerged:
+        return
+
+    print()
+    warn("Cleanup would remove worker work that may not be preserved.")
+    if dirty:
+        warn("Dirty worktrees:")
+        for worker in dirty:
+            warn(f"  {worker.name}: {worker.worktree_path}")
+    if unmerged:
+        warn("Branches with commits not merged into HEAD:")
+        for worker in unmerged:
+            warn(f"  {worker.name}: {worker.branch}")
+    die("Refusing cleanup. Commit/merge the work first, or rerun with --force.")
+
+
 # ---------------------------------------------------------------------------
 # tmux management
 # ---------------------------------------------------------------------------
@@ -440,7 +537,7 @@ def create_tmux_session(workers: list[WorkerInfo], *, remain_on_exit: bool = Fal
 
     # Create session with the first worker
     first = workers[0]
-    write_state(first.status_file, "running")
+    write_worker_state(first, "running")
     tmux(
         "new-session",
         "-d",                        # detached
@@ -468,7 +565,7 @@ def add_worker_to_tmux(worker: WorkerInfo) -> None:
         warn(f"tmux session '{session_name}' does not exist, cannot add worker.")
         return
 
-    write_state(worker.status_file, "running")
+    write_worker_state(worker, "running")
     tmux("new-window", "-t", session_name, "-n", worker.slug)
     cmd = worker.launcher_cmd()
     tmux("send-keys", "-t", f"{session_name}:{worker.slug}", cmd, "Enter")
@@ -763,7 +860,7 @@ def mode_watch(plan: dict, workers: list[WorkerInfo], repo_root: Path) -> None:
                 warn(f"tmux session '{tmux_name}' died.")
                 for w in workers:
                     if read_worker_state(w) == "running":
-                        write_state(w.status_file, "failed")
+                        write_worker_state(w, "failed")
                         warn(f"Worker marked failed (session lost): {w.name}")
                 die("Watch aborted: tmux session no longer exists.")
 
@@ -774,7 +871,7 @@ def mode_watch(plan: dict, workers: list[WorkerInfo], repo_root: Path) -> None:
                 if state == "running" and w.slug in dead_panes:
                     exit_code = dead_panes[w.slug]
                     new_state = "completed" if exit_code == 0 else "failed"
-                    write_state(w.status_file, new_state)
+                    write_worker_state(w, new_state)
                     if exit_code == 0:
                         success(f"Worker completed: {w.name}")
                     else:
@@ -788,14 +885,14 @@ def mode_watch(plan: dict, workers: list[WorkerInfo], repo_root: Path) -> None:
 
             for w in ready:
                 # Mark running BEFORE spawn to prevent double-spawn
-                write_state(w.status_file, "running")
+                write_worker_state(w, "running")
                 info(f"Dependencies met — spawning: {w.name}")
                 # Sync coordination files to worktree
                 dst = w.worktree_path / ".orchestration" / session / w.slug
                 dst.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(w.task_file, dst / "task.md")
                 shutil.copy2(w.handoff_file, dst / "handoff.md")
-                write_state(dst / "status.md", "running")
+                write_worker_state(w, "running")
                 # Sync upstream handoff files (prefer worktree copy where worker actually wrote)
                 for dep_name in w.depends_on:
                     dep_w = name_to_worker[dep_name]
@@ -810,7 +907,7 @@ def mode_watch(plan: dict, workers: list[WorkerInfo], repo_root: Path) -> None:
                 try:
                     add_worker_to_tmux(w)
                 except subprocess.CalledProcessError as e:
-                    write_state(w.status_file, "failed")
+                    write_worker_state(w, "failed")
                     warn(f"Failed to spawn worker '{w.name}': {e}")
 
             # 3. Check exit condition
@@ -836,12 +933,15 @@ def mode_watch(plan: dict, workers: list[WorkerInfo], repo_root: Path) -> None:
 
 
 def mode_cleanup(plan: dict, workers: list[WorkerInfo], repo_root: Path, *, force: bool = False) -> None:
-    """Kill session, remove worktrees and branches, optionally remove coordination dir."""
+    """Kill session and remove worktrees/branches when it is safe to do so."""
     session = plan["session"]
     tmux_name = f"orch-{session}"
 
     info(f"Cleaning up session: {session}")
     print()
+
+    if not force:
+        assert_cleanup_safe(workers)
 
     # 1. Kill tmux
     kill_tmux_session(tmux_name)
@@ -860,7 +960,7 @@ def mode_cleanup(plan: dict, workers: list[WorkerInfo], repo_root: Path, *, forc
             info(f"Removed coordination directory: {coord_root}")
         else:
             info(f"Coordination directory kept: {coord_root}")
-            info("Use --force to also remove it.")
+            info("Use --force to remove it after preserving worker changes.")
 
     # Clean up empty .orchestration parent
     orch_root = repo_root / ".orchestration"
@@ -887,7 +987,7 @@ def get_repo_root() -> Path:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="tmux worktree orchestration for parallel Claude Code instances.",
+        description="tmux worktree orchestration for parallel agent runtime sessions.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=textwrap.dedent("""\
             examples:
@@ -895,7 +995,8 @@ def main() -> None:
               %(prog)s plan.json --execute    # create worktrees & tmux session
               %(prog)s plan.json --status     # check running session
               %(prog)s plan.json --watch      # auto-spawn blocked workers on dep completion
-              %(prog)s plan.json --cleanup    # teardown everything
+              %(prog)s plan.json --cleanup    # safe teardown
+              %(prog)s plan.json --cleanup --force  # destructive teardown
         """),
     )
     parser.add_argument("plan", help="Path to plan JSON file")
@@ -904,9 +1005,13 @@ def main() -> None:
     mode.add_argument("--execute", action="store_true", help="Execute the plan (create worktrees & tmux)")
     mode.add_argument("--status", action="store_true", help="Show status of running session")
     mode.add_argument("--watch", action="store_true", help="Monitor and auto-spawn workers when deps complete")
-    mode.add_argument("--cleanup", action="store_true", help="Kill session and remove worktrees")
+    mode.add_argument("--cleanup", action="store_true", help="Kill session and remove safe worktrees")
 
-    parser.add_argument("--force", action="store_true", help="With --cleanup, also remove .orchestration dir")
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="With --cleanup, remove dirty/unmerged worktrees and the .orchestration dir",
+    )
 
     args = parser.parse_args()
 
