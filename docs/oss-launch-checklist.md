@@ -9,5 +9,10 @@
 - [x] Markdown link check passes locally.
 - [x] `git ls-files` contains no private workspace files locally.
 - [x] No `workspace/`, `work-social/`, logs, local settings, memory, sessions, or checkpoints are tracked locally.
-- [ ] GitHub Actions pass on a clean checkout.
+- [x] GitHub Actions pass on a clean checkout.
+- [x] Dependabot configuration is present.
+- [x] GitHub vulnerability alerts and automated security fixes are enabled.
 - [ ] Branch protection is enabled for `main`.
+
+Note: branch protection currently requires GitHub Pro while the repo remains
+private, or it can be enabled after switching the repository to public.
