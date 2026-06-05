@@ -25,6 +25,15 @@ jobs:
         run: craft catalog --format md --output docs/skill-catalog.md
       - name: Orchestrator dry run
         run: craft orchestrate examples/plan.json --dry-run
+      - name: Local installer
+        run: |
+          bash scripts/install.sh --local . --prefix /tmp/craft-harness-install
+          cd /tmp
+          /tmp/craft-harness-install/bin/craft doctor
+          mkdir -p /tmp/craft-harness-target
+          cd /tmp/craft-harness-target
+          git init
+          /tmp/craft-harness-install/bin/craft orchestrate examples/plan.json --dry-run
       - name: Plan schema validation
         run: python scripts/validate-plan.py examples/plan.json
       - name: Markdown links

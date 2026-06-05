@@ -80,7 +80,35 @@ UI, or a fully managed cloud automation platform.
 Optional Korea, legal, finance, marketing, planning, and content packs are not
 included in this initial public scope.
 
-## Quick Start
+## Installation
+
+### curl
+
+After the repository is public:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/woogi-kang/craft-harness/main/scripts/install.sh | bash
+craft doctor
+```
+
+The installer places the harness in `~/.local/share/craft-harness` and links
+`craft` into `~/.local/bin`.
+
+### Homebrew
+
+```bash
+brew tap woogi-kang/craft-harness https://github.com/woogi-kang/craft-harness.git
+brew install craft-harness
+craft doctor
+```
+
+The in-repo Homebrew formula tracks `main` for the initial open-source
+bootstrap. A dedicated tap and tagged release formula are planned after the
+first public release.
+
+### Source Checkout
+
+For local development:
 
 ```bash
 git clone https://github.com/woogi-kang/craft-harness.git
@@ -92,11 +120,36 @@ craft catalog --format md --output docs/skill-catalog.md
 craft orchestrate examples/plan.json --dry-run
 ```
 
-You can also run the local wrapper without installing:
+You can also run the local wrapper without editable install:
 
 ```bash
 ./craft doctor
 ./craft catalog --format json
+```
+
+See [Installation](docs/install.md) for custom prefixes, local installer tests,
+and uninstall commands.
+
+## Quick Start
+
+```bash
+craft doctor
+craft validate
+craft catalog --format md
+```
+
+From a git-backed project, preview the bundled orchestration example:
+
+```bash
+craft orchestrate examples/plan.json --dry-run
+```
+
+Then install guidance into a project:
+
+```bash
+craft install --target codex --dest /path/to/project
+craft install --target gemini --dest /path/to/project
+craft install --target opencode --dest /path/to/project
 ```
 
 ## Tutorial: First 5 Minutes
@@ -117,7 +170,7 @@ public agent, skill, command, and template directories.
 Generate a Markdown catalog for humans:
 
 ```bash
-craft catalog --format md --output docs/skill-catalog.md
+craft catalog --format md --output /tmp/craft-skill-catalog.md
 ```
 
 Generate JSON when another tool should consume the catalog:
@@ -157,7 +210,7 @@ project.
 
 ### 4. Dry-run an Orchestration Plan
 
-Preview a two-worker plan without starting any agent:
+From a git repository, preview a two-worker plan without starting any agent:
 
 ```bash
 craft orchestrate examples/plan.json --dry-run

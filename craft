@@ -1,5 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PYTHONPATH="$SCRIPT_DIR/src${PYTHONPATH:+:$PYTHONPATH}" exec python3 -m craft_harness.cli "$@"
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+
+SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+PYTHON_BIN="${PYTHON:-python3}"
+
+export CRAFT_HARNESS_ROOT="$SCRIPT_DIR"
+export CRAFT_HARNESS_CALLER_CWD="${CRAFT_HARNESS_CALLER_CWD:-$(pwd)}"
+export PYTHONPATH="$SCRIPT_DIR/src${PYTHONPATH:+:$PYTHONPATH}"
+
+exec "$PYTHON_BIN" -m craft_harness.cli "$@"

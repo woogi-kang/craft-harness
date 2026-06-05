@@ -53,6 +53,12 @@ class SkillInfo:
 
 
 def find_root(start: Path | None = None) -> Path:
+    env_root = os.environ.get("CRAFT_HARNESS_ROOT")
+    if env_root:
+        candidate = Path(env_root).expanduser().resolve()
+        if all((candidate / marker).exists() for marker in ROOT_MARKERS):
+            return candidate
+
     current = (start or Path.cwd()).resolve()
     for candidate in (current, *current.parents):
         if all((candidate / marker).exists() for marker in ROOT_MARKERS):
@@ -363,7 +369,19 @@ def command_orchestrate(args: argparse.Namespace) -> int:
     if not script.exists():
         print(f"Missing orchestrator script: {script}", file=sys.stderr)
         return 1
-    cmd = [sys.executable, str(script), args.plan]
+
+    caller_cwd = Path(os.environ.get("CRAFT_HARNESS_CALLER_CWD") or Path.cwd()).resolve()
+    plan_path = Path(args.plan).expanduser()
+    if plan_path.is_absolute():
+        resolved_plan = plan_path
+    elif (caller_cwd / plan_path).exists():
+        resolved_plan = caller_cwd / plan_path
+    elif (root / plan_path).exists():
+        resolved_plan = root / plan_path
+    else:
+        resolved_plan = caller_cwd / plan_path
+
+    cmd = [sys.executable, str(script), str(resolved_plan)]
     if args.execute:
         cmd.append("--execute")
     elif args.watch:
@@ -372,7 +390,7 @@ def command_orchestrate(args: argparse.Namespace) -> int:
         cmd.append("--status")
     elif args.cleanup:
         cmd.append("--cleanup")
-    return subprocess.call(cmd, cwd=root)
+    return subprocess.call(cmd, cwd=caller_cwd)
 
 
 def build_parser() -> argparse.ArgumentParser:
