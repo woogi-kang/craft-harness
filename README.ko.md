@@ -358,6 +358,9 @@ python3 scripts/validate-plan.py examples/plan.json
 큰 변경을 제안하기 전에는 [CONTRIBUTING.md](CONTRIBUTING.md),
 [SECURITY.md](SECURITY.md), [SUPPORT.md](SUPPORT.md)를 확인해 주세요.
 
+maintainer는 새 버전 태그나 Homebrew tap 업데이트 전에
+[Release Process](docs/release.md)를 따라야 합니다.
+
 ## License
 
 Apache-2.0. 기여는 `CONTRIBUTING.md`에 설명된 Developer Certificate of Origin에

@@ -359,6 +359,9 @@ python3 scripts/validate-plan.py examples/plan.json
 Read [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and
 [SUPPORT.md](SUPPORT.md) before proposing larger changes.
 
+Maintainers should use [Release Process](docs/release.md) when cutting a new
+version or updating the Homebrew tap.
+
 ## License
 
 Apache-2.0. Contributions are accepted under the Developer Certificate of Origin

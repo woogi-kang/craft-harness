@@ -20,6 +20,11 @@ craft orchestrate examples/plan.json --dry-run
 - Keep skill changes scoped and include frontmatter.
 - Do not add optional domain packs to core without a roadmap issue.
 
+## Releases
+
+Maintainers should follow [Release Process](docs/release.md) before tagging a
+new version or updating the Homebrew tap.
+
 ## DCO
 
 Contributions are accepted under the Developer Certificate of Origin.
