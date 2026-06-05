@@ -1,14 +1,35 @@
-![Craft Harness banner](docs/assets/craft-harness-banner.png)
-
-<p align="right">
-  <a href="README.md"><kbd>English</kbd></a>
-  <a href="README.ko.md"><kbd>한국어</kbd></a>
+<p align="center">
+  <img src="docs/assets/craft-harness-banner.png" alt="Craft Harness banner">
 </p>
 
-# Craft Harness
+<h1 align="center">Craft Harness</h1>
 
-**Portable agent packs, runtime adapters, and orchestration contracts for teams
-that use more than one AI coding agent.**
+<p align="center">
+  Portable agent packs, runtime adapters, and orchestration contracts for teams
+  that use more than one AI coding agent.
+</p>
+
+<p align="center">
+  <a href="README.md">English</a> ·
+  <a href="README.ko.md">한국어</a> ·
+  <a href="README.ja.md">日本語</a> ·
+  <a href="README.zh.md">中文</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/woogi-kang/craft-harness/actions/workflows/ci.yml"><img src="https://github.com/woogi-kang/craft-harness/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/woogi-kang/craft-harness/releases"><img src="https://img.shields.io/github/v/release/woogi-kang/craft-harness?sort=semver" alt="Release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/woogi-kang/craft-harness" alt="License"></a>
+  <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+"></a>
+  <a href="https://github.com/woogi-kang/homebrew-tap"><img src="https://img.shields.io/badge/homebrew-woogi--kang%2Ftap-orange" alt="Homebrew tap"></a>
+</p>
+
+<p align="center">
+  <a href="docs/install.md">Installation</a> ·
+  <a href="docs/architecture.md">Architecture</a> ·
+  <a href="docs/skill-catalog.md">Skill Catalog</a> ·
+  <a href="docs/spec-contract.md">Plan Contract</a>
+</p>
 
 Craft Harness is not another coding agent. It is the harness layer around your
 agents: reusable roles, skills, commands, output styles, install adapters,
