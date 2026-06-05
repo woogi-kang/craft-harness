@@ -6,7 +6,7 @@ adapter files at runtime.
 
 ## curl
 
-After the repository is public, install the latest `main` branch with:
+Install the latest `main` branch from the public repository with:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/woogi-kang/craft-harness/main/scripts/install.sh | bash

@@ -54,6 +54,52 @@ Craft Harness provides a public, inspectable layer for those workflows:
 | Verification contracts | Each worker can carry acceptance criteria, eval type, and QA handoff expectations |
 | Public safety boundary | Validation blocks private workspaces, logs, backups, local settings, and common secret patterns |
 
+## How It Works
+
+Craft Harness keeps reusable assets in one portable repo, then installs or
+exports the right guidance for each runtime.
+
+```mermaid
+flowchart LR
+  subgraph "Craft Harness"
+    A["agents/"]
+    S["skills/"]
+    C["commands/"]
+    T["templates/"]
+    O["output-styles/"]
+    V["validation"]
+  end
+
+  A --> I["craft install"]
+  S --> I
+  C --> I
+  T --> P["plan.json"]
+  O --> R["predictable final responses"]
+  V --> Q["public safety checks"]
+
+  I --> Claude["Claude"]
+  I --> Codex["Codex"]
+  I --> Gemini["Gemini"]
+  I --> OpenCode["OpenCode"]
+  I --> OpenHands["OpenHands-style workflows"]
+```
+
+The orchestrator turns a plan into isolated worktrees, tmux workers, handoff
+files, and QA-ready completion contracts.
+
+```mermaid
+flowchart TD
+  Plan["plan.json"] --> Validate["validate worker DAG"]
+  Validate --> Coord["write .orchestration task files"]
+  Coord --> Trees["create git worktrees"]
+  Trees --> Ready["start ready workers in tmux"]
+  Ready --> Handoff["workers write handoff.md and status.md"]
+  Handoff --> Watch["watch dependency completion"]
+  Watch --> Blocked["spawn unblocked workers"]
+  Blocked --> QA["QA checks success criteria"]
+  QA --> Report["final summary and rework notes"]
+```
+
 ## Who Should Use This
 
 Craft Harness is a good fit if you:
@@ -84,7 +130,7 @@ included in this initial public scope.
 
 ### curl
 
-After the repository is public:
+Install from the public repository:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/woogi-kang/craft-harness/main/scripts/install.sh | bash
@@ -323,12 +369,18 @@ docs/            Architecture, contracts, catalog, and launch notes
 ## Validation
 
 ```bash
-craft doctor
-craft validate
+make test
+python3 scripts/check-markdown-links.py .
+python3 -m compileall -q src scripts
 ```
 
-Validation checks skill frontmatter, public file exclusions, and high-confidence
-secret patterns. CI also checks catalog generation and local Markdown links.
+The validation gate checks local setup, skill frontmatter, public file
+exclusions, high-confidence secret patterns, catalog generation, plan schema
+validation, orchestration dry-run, Markdown links, and Python compilation.
+
+CI also runs a local installer test to make sure a symlinked `craft` command can
+find the installed harness assets and orchestrate against a separate git
+repository.
 
 ## Roadmap
 

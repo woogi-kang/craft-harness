@@ -11,7 +11,7 @@ repositories:
 Start from a clean `main` branch.
 
 ```bash
-cd /Users/woogi/Development/craft-harness
+cd path/to/craft-harness
 git status --short
 git pull --ff-only origin main
 ```
@@ -59,7 +59,7 @@ git init
 ## 3. Commit and Wait for CI
 
 ```bash
-cd /Users/woogi/Development/craft-harness
+cd path/to/craft-harness
 git add pyproject.toml CHANGELOG.md README.md README.ko.md docs
 git commit -s -m "Prepare vX.Y.Z release"
 git push origin main
@@ -98,7 +98,7 @@ curl -fsSL "https://github.com/woogi-kang/craft-harness/archive/refs/tags/$VERSI
 shasum -a 256 "/tmp/craft-harness-$VERSION.tar.gz"
 ```
 
-Update `/Users/woogi/Development/homebrew-tap/Formula/craft-harness.rb`:
+Update `Formula/craft-harness.rb` in the `woogi-kang/homebrew-tap` checkout:
 
 - `url`
 - `sha256`
@@ -106,7 +106,7 @@ Update `/Users/woogi/Development/homebrew-tap/Formula/craft-harness.rb`:
 Then test the formula:
 
 ```bash
-cd /Users/woogi/Development/homebrew-tap
+cd path/to/homebrew-tap
 ruby -c Formula/craft-harness.rb
 git diff -- Formula/craft-harness.rb
 git add Formula/craft-harness.rb

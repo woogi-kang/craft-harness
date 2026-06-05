@@ -36,7 +36,7 @@ those criteria as the completion contract.
 
 ## Schema
 
-The draft public schema lives at `schemas/plan-v2.schema.json`.
+The public plan schema lives at `schemas/plan-v2.schema.json`.
 
 Validate a plan with:
 
