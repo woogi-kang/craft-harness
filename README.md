@@ -1,3 +1,5 @@
+![Craft Harness banner](docs/assets/craft-harness-banner.png)
+
 # Craft Harness
 
 Craft Harness is a multi-runtime agent harness for teams that use several coding
